@@ -18,13 +18,34 @@ import JobDetail from "./components/Candidate/JobDetail";
 import Dashboard from "./components/Candidate/Dashboard";
 import AppliedJobs from "./components/Candidate/AppliedJobs";
 import CandidateProfile from "./components/Candidate/CandidateProfile ";
+import AdminDashboard from "./components/Admin/AdminDashboard";
+import Candidates from "./components/Admin/Candidates";
+import Employers from "./components/Admin/Employers";
+import AdminJobDetails from "./components/Admin/AdminJobDetails";
+import JobApplications from "./components/Admin/JobApplications"
+import EmployerDetail from "./components/Admin/EmployerDetail";
 
 const Routers = () => {
   return (
     <Routes>
       <Route path="/" element={<MainLayout />}>
         <Route index element={<Home />} />
+        <Route path="login" element={<LoginForm />} />
         <Route path="about" element={<About />} />
+
+
+        
+        <Route path="admin/dashboard" element={<AdminDashboard />} />
+        <Route path="admin/candidates" element={<Candidates />} />
+        <Route path="admin/employers" element={<Employers />} />
+        <Route path="admin/employers/:company_name/:org_id" element={<AdminJobDetails />} />
+        <Route path="admin/applications/:job_id" element={<JobApplications />} />
+        <Route path="/admin/employer/:org_id" element={<EmployerDetail />} />
+
+
+
+
+
         <Route path="candidate" element={<CandidateRegister />} />
         <Route path="candidate/jobs" element={<JobList />} />
         <Route path="candidate/dashboard" element={<Dashboard />} />
@@ -33,7 +54,6 @@ const Routers = () => {
         <Route path="/candidate/job-details/:jobId" element={<JobDetail />} />
 
         <Route path="employer" element={<EmployerRegister />} />
-        <Route path="login" element={<LoginForm />} />
         <Route path="employer/post" element={<JobPostForm />} />
         <Route path="employer/dashboard" element={<EmployerDashboard />} />
         <Route path="employer/jobs" element={<JobListings />} />

@@ -33,6 +33,7 @@ const LoginForm = () => {
       alert("Login successful!");
       if (role == "Employer") navigate("/employer/dashboard");
       else if (role == "Candidate") navigate("/candidate/dashboard");
+      else if(role=='Admin') navigate("/admin/dashboard")
     } catch (err) {
       setError("Invalid credentials. Please try again.");
     }

@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import makeRequest from '../../axios';
 import { Link } from 'react-router-dom';
+import {
+  FaMapMarkerAlt,
+  FaBriefcase,
+  FaMoneyBillWave,
+  FaCalendarAlt,
+} from 'react-icons/fa';
 
 const JobList = () => {
   const [jobs, setJobs] = useState([]);
@@ -12,6 +18,7 @@ const JobList = () => {
       const response = await makeRequest.get('candidate/search-jobs/');
       setJobs(response.data);
     } catch (err) {
+      console.error(err);
       setError('Failed to fetch jobs');
     } finally {
       setLoading(false);
@@ -23,26 +30,46 @@ const JobList = () => {
   }, []);
 
   return (
-    <div className="max-w-4xl mx-auto mt-10 p-6 bg-white shadow rounded">
-      <h2 className="text-2xl font-bold text-red-600 mb-4">Job Listings</h2>
+    <div className="max-w-5xl mx-auto px-4 py-8">
+      <h2 className="text-3xl font-bold text-gray-800 mb-6">🔥 Latest Job Openings</h2>
 
-      {loading && <div className="text-red-600">Loading...</div>}
+      {loading && <div className="text-blue-500">Loading jobs...</div>}
       {error && <div className="text-red-500">{error}</div>}
 
-      <div className="space-y-4">
+      <div className="grid sm:grid-cols-2 gap-6">
         {jobs?.map((job) => (
           <div
-            key={job.job_id}
-            className="p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition"
+            key={job.id}
+            className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all p-5"
           >
-            <h3 className="text-lg font-semibold text-red-700">{job.title}</h3>
-            <p className="text-sm text-gray-600">{job.company_name}</p>
-            <p className="text-sm text-gray-500">{job.location}</p>
-            <div className="flex justify-between items-center mt-2">
-              <span className="text-sm text-gray-400">{job.job_type}</span>
+            <div className="mb-2">
+              <h3 className="text-xl font-semibold text-blue-700">{job.title}</h3>
+              <p className="text-sm text-gray-500">{job.company_name}</p>
+            </div>
+
+            <div className="space-y-2 text-sm text-gray-600">
+              <p className="flex items-center gap-2">
+                <FaBriefcase className="text-green-500" />
+                <span>{job.job_type}</span>
+              </p>
+              <p className="flex items-center gap-2">
+                <FaMapMarkerAlt className="text-orange-500" />
+                <span>{job.location}</span>
+              </p>
+              <p className="flex items-center gap-2">
+                <FaMoneyBillWave className="text-green-600" />
+                <span>{job.salary || 'Not specified'}</span>
+              </p>
+              <p className="flex items-center gap-2">
+                <FaCalendarAlt className="text-red-500" />
+                <span>Apply by: {new Date(job.last_date_of_apply).toLocaleDateString()}</span>
+              </p>
+            </div>
+
+            <div className="mt-4 text-right">
               <Link
-                to={`/candidate/job-details/${job.job_id}`}
-                className="text-sm text-red-500 hover:text-red-600 underline"
+                to={`/candidate/job-details/${job.id}`}
+                className="inline-block text-sm text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md transition"
               >
                 View Details
               </Link>

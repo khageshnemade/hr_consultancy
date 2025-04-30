@@ -1,1 +1,8 @@
 1.JobApply.jsx      candidate/job-apply/  remaining
+2.https://consultancy.scholarnet.in/api/admin/getcandidate/32e7971ddd92408ca4e8c45145c31e0c/
+    in this admin api candidate id not getting 
+
+
+Employer  1.getApplicationsbyjob_id    2.getCandidatebyCandidate_id
+
+candidate  1.
