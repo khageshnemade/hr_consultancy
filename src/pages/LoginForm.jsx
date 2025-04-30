@@ -16,16 +16,23 @@ const LoginForm = () => {
     setError("");
 
     try {
-      const res = await axios.post("https://consultancy.scholarnet.in/api/core/login/", formData);
-      
+      const res = await axios.post(
+        "https://consultancy.scholarnet.in/api/core/login/",
+        formData
+      );
+
       const { access, refresh, role } = res.data;
 
       // Save to localStorage
-      localStorage.setItem("user", JSON.stringify({ token: access, refresh, role }));
+      localStorage.setItem(
+        "user",
+        JSON.stringify({ token: access, refresh, role })
+      );
 
       // Redirect or show success
       alert("Login successful!");
-      navigate("/dashboard"); // Or wherever you want to go after login
+      if (role == "Employer") navigate("/employer/dashboard");
+      else if (role == "Candidate") navigate("/candidate/dashboard");
     } catch (err) {
       setError("Invalid credentials. Please try again.");
     }

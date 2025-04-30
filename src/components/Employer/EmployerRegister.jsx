@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import makeRequest from "../axios";
+import makeRequest from "../../axios";
 const EmployerRegister = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -41,10 +41,7 @@ const EmployerRegister = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await makeRequest.post(
-        "employer/registration/",
-        formData
-      );
+      const res = await makeRequest.post("employer/registration/", formData);
       console.log("Employer registered:", res.data);
       alert("Employer registered successfully!");
       // Reset form
@@ -66,7 +63,10 @@ const EmployerRegister = () => {
         },
       });
     } catch (error) {
-      console.error("Registration failed:", error.response?.data || error.message);
+      console.error(
+        "Registration failed:",
+        error.response?.data || error.message
+      );
       alert("Registration failed. Please check your input.");
     }
   };

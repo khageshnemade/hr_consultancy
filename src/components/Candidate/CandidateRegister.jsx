@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import makeRequest from "../axios";
+import makeRequest from "../../axios";
 
 const CandidateRegister = () => {
   const [formData, setFormData] = useState({
@@ -60,7 +60,10 @@ const CandidateRegister = () => {
         },
       });
     } catch (error) {
-      console.error("Registration failed:", error.response?.data || error.message);
+      console.error(
+        "Registration failed:",
+        error.response?.data || error.message
+      );
       alert("Registration failed. Please check your input.");
     }
   };
@@ -119,19 +122,19 @@ const CandidateRegister = () => {
           <option value="Fresher">Fresher</option>
         </select>
         <div className="flex flex-col">
-  <label className="mb-1 text-sm text-gray-600" htmlFor="dob">
-    Date of Birth (DOB)
-  </label>
-  <input
-    type="date"
-    id="dob"
-    name="dob"
-    value={formData.candidate.dob}
-    onChange={handleChange}
-    className="w-full px-4 py-2 rounded bg-gray-100 focus:outline-none"
-    required
-  />
-</div>
+          <label className="mb-1 text-sm text-gray-600" htmlFor="dob">
+            Date of Birth (DOB)
+          </label>
+          <input
+            type="date"
+            id="dob"
+            name="dob"
+            value={formData.candidate.dob}
+            onChange={handleChange}
+            className="w-full px-4 py-2 rounded bg-gray-100 focus:outline-none"
+            required
+          />
+        </div>
 
         <select
           name="gender"
