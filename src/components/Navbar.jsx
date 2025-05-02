@@ -6,7 +6,12 @@ const Navbar = () => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
-
+  const [title, setTitle] = useState("");
+  const [locationQuery, setLocationQuery] = useState("");
+  const handleSearch = () => {
+    if (!title && !locationQuery) return; // Avoid empty search
+    navigate(`/?title=${encodeURIComponent(title)}&location=${encodeURIComponent(locationQuery)}`);
+  };
   useEffect(() => {
     const stored = localStorage.getItem("user");
     if (stored) {
@@ -36,10 +41,9 @@ const Navbar = () => {
               key={path}
               to={path}
               className={({ isActive }) =>
-                `px-1 py-2 text-sm border-b-2 ${
-                  isActive
-                    ? "border-red-500 text-red-600"
-                    : "border-transparent hover:border-red-500 hover:text-red-600"
+                `px-1 py-2 text-sm border-b-2 ${isActive
+                  ? "border-red-500 text-red-600"
+                  : "border-transparent hover:border-red-500 hover:text-red-600"
                 }`
               }
             >
@@ -52,10 +56,22 @@ const Navbar = () => {
         <div className="hidden lg:flex items-center bg-white rounded-full shadow-sm px-3 py-1 w-[250px]">
           <input
             type="text"
-            placeholder="Search..."
+            placeholder="Title..."
             className="w-full text-sm outline-none text-gray-700"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
           />
-          <button className="p-2 text-white bg-blue-600 rounded-full hover:bg-blue-700 ml-2">
+          <input
+            type="text"
+            placeholder="Location..."
+            className="w-full text-sm outline-none text-gray-700 ml-2"
+            value={locationQuery}
+            onChange={(e) => setLocationQuery(e.target.value)}
+          />
+          <button
+            onClick={handleSearch}
+            className="p-2 text-white bg-blue-600 rounded-full hover:bg-blue-700 ml-2"
+          >
             <Search size={18} />
           </button>
         </div>
@@ -93,29 +109,21 @@ const Navbar = () => {
 
           {/* Dropdown */}
           <div className="relative group">
-            <div className="flex items-center space-x-1 text-sm text-gray-700 hover:text-red-600 cursor-pointer border-b-2 border-transparent group-hover:border-red-500">
-              <span>For employers</span>
-              <ChevronDown size={16} />
+            <div className="flex items-center space-x-4 text-sm text-gray-700">
+              <NavLink
+                to="/employer"
+                className={({ isActive }) =>
+                  `px-2 py-1 border-b-2 ${isActive
+                    ? "text-red-600 border-red-500"
+                    : "hover:text-red-600 hover:border-red-500 border-transparent"
+                  }`
+                }
+              >
+                Employer
+              </NavLink>
+
             </div>
 
-            {/* Dropdown Items */}
-            <div className="absolute right-0 mt-2 w-40 bg-white rounded py-2 z-10 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-              {["/employer", "/candidate", "/admin"].map((link, idx) => (
-                <NavLink
-                  key={link}
-                  to={link}
-                  className={({ isActive }) =>
-                    `block px-4 py-2 text-sm ${
-                      isActive
-                        ? "text-red-600 border-b-2 border-red-500"
-                        : "hover:text-red-600 hover:border-b-2 hover:border-red-500"
-                    }`
-                  }
-                >
-                  {["Employer", "Admin"][idx]}
-                </NavLink>
-              ))}
-            </div>
           </div>
         </div>
       </div>

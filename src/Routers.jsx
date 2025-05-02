@@ -60,15 +60,16 @@ const Routers = () => {
         <Route path="candidate/applied_jobs" element={<AppliedJobs />} />
         <Route path="/candidate/job-details/:jobId" element={<JobDetail />} />
 
+
         <Route path="employer" element={<EmployerRegister />} />
         <Route path="employer/post" element={<JobPostForm />} />
         <Route path="employer/dashboard" element={<EmployerDashboard />} />
         <Route
-          path="/employer/applications/:job_id"
+          path="/employer/applications/:title/:job_id"
           element={<ApplicationView />}
         />
         <Route
-          path="/employer/update-status/:app_id"
+          path="/employer/update-status/:istatus/:app_id"
           element={<UpdateApplicationStatus />}
         />
         <Route path="employer/jobs" element={<JobListings />} />

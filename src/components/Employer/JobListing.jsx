@@ -95,7 +95,7 @@ const JobListings = () => {
 
                   <div className="flex gap-3 text-white text-sm">
                     <Link
-                      to={`/employer/applications/${job.job_id}`}
+                      to={`/employer/applications/${job.title}/${job.job_id}`}
                       data-tooltip-id={`app-${job.job_id}`}
                       className="bg-purple-500 hover:bg-purple-600 p-2 rounded"
                     >

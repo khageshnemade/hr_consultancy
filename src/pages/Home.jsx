@@ -1,53 +1,191 @@
-// src/pages/Home.jsx
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from 'axios'; 
+import { Link, useLocation } from "react-router-dom";
+import { toast } from "react-toastify";
+import {
+  FaMapMarkerAlt,
+  FaBriefcase,
+  FaMoneyBillWave,
+  FaCalendarAlt,
+  FaBuilding,
+} from "react-icons/fa";
 
 const Home = () => {
+  const [jobs, setJobs] = useState([]);
+  const [employers, setEmployers] = useState([]);
+  const [loadingJobs, setLoadingJobs] = useState(true);
+  const [loadingEmployers, setLoadingEmployers] = useState(true);
+  const [jobError, setJobError] = useState("");
+  const [employerError, setEmployerError] = useState("");
+  const location = useLocation();
+
+  const fetchJobs = async () => {
+    setLoadingJobs(true);
+    setJobError("");
+  
+    // Read query params
+    const searchParams = new URLSearchParams(location.search);
+    const title = searchParams.get("title") || "";
+    const loc = searchParams.get("location") || "";
+  
+    try {
+      const response = await axios.get(
+        `https://consultancy.scholarnet.in/api/candidate/search-jobs/?title=${encodeURIComponent(title)}&location=${encodeURIComponent(loc)}`
+      );
+      setJobs(response.data);
+    } catch (err) {
+      console.error("Error fetching jobs:", err);
+      setJobError("Failed to fetch jobs.");
+    } finally {
+      setLoadingJobs(false);
+    }
+  };
+  
+  useEffect(() => {
+    fetchJobs();
+    fetchEmployers();
+  }, [location.search]);
+  const fetchEmployers = async () => {
+    try {
+      const response = await axios.get("https://consultancy.scholarnet.in/api/candidate/getallEmployers");
+      setEmployers(response.data);
+    } catch (err) {
+      console.error("Error fetching employers:", err);
+      setEmployerError("Failed to fetch employer data.");
+    } finally {
+      setLoadingEmployers(false);
+    }
+  };
+
+  const handleApply = async () => {
+    try {
+      await axios.post("candidate/job-apply/", {
+        status: "Pending",
+        job: jobId,
+      });
+      toast.success("Successfully applied to job!");
+    } catch (error) {
+      console.error("Failed to apply:", error);
+      toast.error("Failed to apply. Please try again.");
+    }
+  };
+
+  const getCompanyName = (jobCompanyName) => {
+    const match = employers.find(
+      (emp) => emp.employer?.company_name === jobCompanyName
+    );
+    return match?.employer?.company_name || jobCompanyName;
+  };
+
+  useEffect(() => {
+    fetchJobs();
+    fetchEmployers();
+  }, []);
+
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-gray-800 mb-4">Welcome to SJSA</h1>
-      <p className="text-gray-600 leading-relaxed">
-        This is the homepage for your portal. Here you can add highlights,
-        schemes, important announcements, and more. Lorem ipsum dolor sit amet
-        consectetur adipisicing elit. Deleniti maiores quibusdam, ipsa dicta
-        magnam voluptate quis provident magni aliquid ipsum nisi nesciunt
-        voluptatibus dolore neque vitae facere iusto vel? Quidem tempora dicta
-        minima, eligendi explicabo deleniti unde! Iure dignissimos maxime
-        incidunt! Ad iusto, distinctio optio facere consequuntur, odio suscipit
-        dolores eveniet, assumenda quod nemo saepe voluptate. Odit provident
-        repellat labore, ducimus sit vero molestias voluptate aliquam deleniti
-        similique odio quisquam culpa dolor quasi aperiam. Quae dolorem quaerat
-        mollitia aut odio natus consequuntur minus, delectus tenetur, harum
-        assumenda dolores laborum. Est laborum aperiam et sequi corrupti,
-        mollitia ipsam possimus cum suscipit. Lorem ipsum dolor sit amet
-        consectetur adipisicing elit. Soluta nostrum, rem rerum repudiandae
-        aperiam voluptates assumenda laudantium, officiis quam tempore
-        perspiciatis, totam corporis optio quaerat laboriosam sunt modi impedit
-        esse aut nobis eum pariatur! Eveniet iusto alias deleniti fugiat a
-        nesciunt eos non nisi at. Sunt quam quas obcaecati harum! Ex quidem
-        aliquam facilis delectus libero, ea impedit natus reiciendis possimus,
-        animi aspernatur inventore. Nihil voluptate, dolores amet nam corrupti
-        dolore facilis culpa, laborum quod incidunt pariatur quo cupiditate a
-        magni natus. Exercitationem doloribus ea eos accusantium, laboriosam,
-        aperiam possimus qui consectetur corrupti modi porro consequatur quasi,
-        libero cumque similique.
-        <table className="table-auto w-full border border-gray-200 rounded-md shadow-sm mt-5">
-          <thead className="bg-gray-100 text-gray-700">
-            <tr>
-              <th className="p-3 text-left">Sr. No.</th>
-              <th className="p-3 text-left">Name</th>
-              <th className="p-3 text-left">Age</th>
-            </tr>
-          </thead>
-          <tbody className="text-gray-800">
-            <tr className="hover:bg-gray-50">
-              <td className="p-3">1</td>
-              <td className="p-3">Khagesh</td>
-              <td className="p-3">34</td>
-            </tr>
-            {/* More rows can go here */}
-          </tbody>
-        </table>
-      </p>
+<div className="w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+<h1 className="text-4xl font-bold text-blue-800 mb-10 text-center">
+        Welcome to Job Portal 🧑‍💼
+      </h1>
+
+      {/* Jobs Section */}
+      <section className="mb-12">
+        <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+          🔥 Latest Job Openings
+        </h2>
+
+        {loadingJobs ? (
+          <p className="text-blue-500 text-center">Loading jobs...</p>
+        ) : jobError ? (
+          <p className="text-red-500 text-center">{jobError}</p>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {jobs.map((job) => (
+          <div
+          key={job.job_id}
+          className="bg-white rounded-xl shadow hover:shadow-xl transition-all duration-300 p-6"
+        >
+          <div className="mb-2">
+            <h3 className="text-xl font-semibold text-blue-700">{job.title}</h3>
+            <p className="text-sm text-gray-500">
+              {getCompanyName(job.company_name)}
+            </p>
+          </div>
+        
+          <div className="space-y-1 text-sm text-gray-600">
+            <p className="flex items-center gap-2">
+              <FaBriefcase className="text-green-500" />
+              {job.job_type}
+            </p>
+            <p className="flex items-center gap-2">
+              <FaMapMarkerAlt className="text-orange-500" />
+              {job.location}
+            </p>
+            <p className="flex items-center gap-2">
+              <FaMoneyBillWave className="text-green-600" />
+              {job.salary || "Not specified"}
+            </p>
+            <p className="flex items-center gap-2">
+              <FaCalendarAlt className="text-red-500" />
+              Apply by: {new Date(job.last_date_of_apply).toLocaleDateString()}
+            </p>
+          </div>
+        
+          <div className="mt-4 flex justify-between items-center">
+            <Link
+              to={`/candidate/job-details/${job.job_id}`}
+              className="text-sm text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md"
+            >
+              View Details
+            </Link>
+            <button
+              onClick={() => handleApply(job.job_id)}
+              className="text-sm text-white bg-green-600 hover:bg-green-700 px-4 py-2 rounded-md"
+            >
+              Apply Now
+            </button>
+          </div>
+        </div>
+        
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* Employers Section */}
+      <section className="bg-gray-100 p-6 rounded-lg">
+        <h2 className="text-2xl font-semibold text-gray-700 mb-4">
+          🏢 Companies Hiring
+        </h2>
+
+        {loadingEmployers ? (
+          <p className="text-blue-500 text-center">Loading employers...</p>
+        ) : employerError ? (
+          <p className="text-red-500 text-center">{employerError}</p>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {employers.map((emp, index) => (
+              <div
+                key={index}
+                className="bg-white p-4 rounded-lg border shadow-sm hover:shadow-md transition"
+              >
+                <div className="flex items-center gap-2 mb-2 text-blue-800">
+                  <FaBuilding />
+                  <span className="font-medium">
+                    {emp.employer?.company_name}
+                  </span>
+                </div>
+                <p className="text-sm text-gray-500">
+                  Industry: {emp.employer?.industry_type}
+                </p>
+                <p className="text-sm text-gray-500">
+                  City: {emp.employer?.city}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
     </div>
   );
 };
