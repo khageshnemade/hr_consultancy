@@ -31,44 +31,82 @@ const LoginForm = () => {
 
       // Redirect or show success
       alert("Login successful!");
-      if (role == "Employer") navigate("/employer/dashboard");
-      else if (role == "Candidate") navigate("/candidate/dashboard");
-      else if(role=='Admin') navigate("/admin/dashboard")
+      if (role === "Employer") navigate("/employer/dashboard");
+      else if (role === "Candidate") navigate("/candidate/dashboard");
+      else if (role === "Admin") navigate("/admin/dashboard");
     } catch (err) {
       setError("Invalid credentials. Please try again.");
     }
   };
 
   return (
-    <div className="max-w-md mx-auto mt-20 p-6 rounded shadow bg-white">
-      <h2 className="text-2xl font-bold mb-4 text-red-600">Login</h2>
-      {error && <p className="text-red-500 mb-3 text-sm">{error}</p>}
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-          className="w-full px-4 py-2 rounded bg-gray-100 focus:outline-none"
-          required
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
-          className="w-full px-4 py-2 rounded bg-gray-100 focus:outline-none"
-          required
-        />
-        <button
-          type="submit"
-          className="w-full bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-        >
-          Login
-        </button>
-      </form>
+    <div className="min-h-screen flex items-center justify-center p-6">
+      <div className="bg-white shadow-lg rounded-xl w-full max-w-4xl flex flex-col md:flex-row h-auto md:h-[80vh]">
+        {/* Left Side Image */}
+        <div className="md:w-1/2 hidden md:block">
+          <img
+            src="https://picsum.photos/id/700/480" // Replace with a random or desired image
+            alt="Login Illustration"
+            className="w-full h-full object-cover rounded-l-xl"
+          />
+        </div>
+
+        {/* Right Side Form */}
+        <div className="md:w-1/2 w-full p-8 flex flex-col justify-center">
+          <h2 className="text-2xl font-bold mb-6 text-center text-red-600">
+            Login
+          </h2>
+
+          {/* Error message */}
+          {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Email Input */}
+            <div>
+              <label htmlFor="email" className="block text-gray-700 mb-1">
+                Email
+              </label>
+              <input
+                type="email"
+                name="email"
+                id="email"
+                placeholder="Enter your email"
+                value={formData.email}
+                onChange={handleChange}
+                className="w-full px-4 py-2 bg-gray-100 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-600"
+                required
+              />
+            </div>
+
+            {/* Password Input */}
+            <div>
+              <label htmlFor="password" className="block text-gray-700 mb-1">
+                Password
+              </label>
+              <input
+                type="password"
+                name="password"
+                id="password"
+                placeholder="Enter your password"
+                value={formData.password}
+                onChange={handleChange}
+                className="w-full px-4 py-2 bg-gray-100 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-600"
+                required
+              />
+            </div>
+
+            {/* Submit Button */}
+            <div>
+              <button
+                type="submit"
+                className="w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700 focus:ring-4 focus:ring-red-600 transition"
+              >
+                Login
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   );
 };

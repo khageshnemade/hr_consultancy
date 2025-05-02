@@ -22,8 +22,11 @@ import AdminDashboard from "./components/Admin/AdminDashboard";
 import Candidates from "./components/Admin/Candidates";
 import Employers from "./components/Admin/Employers";
 import AdminJobDetails from "./components/Admin/AdminJobDetails";
-import JobApplications from "./components/Admin/JobApplications"
+import JobApplications from "./components/Admin/JobApplications";
 import EmployerDetail from "./components/Admin/EmployerDetail";
+import CandidateDetails from "./components/Admin/CandidateDetails";
+import ApplicationView from "./components/Employer/ApplicationView";
+import UpdateApplicationStatus from "./components/Employer/UpdateApplicationStatus ";
 
 const Routers = () => {
   return (
@@ -33,18 +36,22 @@ const Routers = () => {
         <Route path="login" element={<LoginForm />} />
         <Route path="about" element={<About />} />
 
-
-        
         <Route path="admin/dashboard" element={<AdminDashboard />} />
         <Route path="admin/candidates" element={<Candidates />} />
+        <Route
+          path="/admin/candidate-details/:candidateId"
+          element={<CandidateDetails />}
+        />
         <Route path="admin/employers" element={<Employers />} />
-        <Route path="admin/employers/:company_name/:org_id" element={<AdminJobDetails />} />
-        <Route path="admin/applications/:job_id" element={<JobApplications />} />
+        <Route
+          path="admin/employers/:company_name/:org_id"
+          element={<AdminJobDetails />}
+        />
+        <Route
+          path="admin/applications/:company_name/:job_id"
+          element={<JobApplications />}
+        />
         <Route path="/admin/employer/:org_id" element={<EmployerDetail />} />
-
-
-
-
 
         <Route path="candidate" element={<CandidateRegister />} />
         <Route path="candidate/jobs" element={<JobList />} />
@@ -56,6 +63,14 @@ const Routers = () => {
         <Route path="employer" element={<EmployerRegister />} />
         <Route path="employer/post" element={<JobPostForm />} />
         <Route path="employer/dashboard" element={<EmployerDashboard />} />
+        <Route
+          path="/employer/applications/:job_id"
+          element={<ApplicationView />}
+        />
+        <Route
+          path="/employer/update-status/:app_id"
+          element={<UpdateApplicationStatus />}
+        />
         <Route path="employer/jobs" element={<JobListings />} />
         <Route path="employer/profile" element={<EmployerProfile />} />
         <Route path="employer/jobs/:job_id" element={<JobDetails />} />

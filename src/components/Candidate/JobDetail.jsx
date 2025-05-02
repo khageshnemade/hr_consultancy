@@ -1,13 +1,24 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
-import makeRequest from '../../axios';
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate, Link } from "react-router-dom";
+import makeRequest from "../../axios";
+import {
+  FaBriefcase,
+  FaMapMarkerAlt,
+  FaMoneyBillWave,
+  FaEnvelope,
+  FaPhoneAlt,
+  FaClock,
+  FaListAlt,
+  FaGraduationCap,
+  FaGift,
+} from "react-icons/fa";
 
 const JobDetail = () => {
   const { jobId } = useParams();
   const navigate = useNavigate();
 
   const [job, setJob] = useState(null);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -16,7 +27,7 @@ const JobDetail = () => {
         const res = await makeRequest.get(`candidate/jobdetail/${jobId}/`);
         setJob(res.data);
       } catch (err) {
-        setError('Failed to load job details');
+        setError("Failed to load job details");
       } finally {
         setLoading(false);
       }
@@ -25,33 +36,97 @@ const JobDetail = () => {
     fetchJobDetails();
   }, [jobId]);
 
-  if (loading) return <div className="text-red-600 text-center mt-10">Loading...</div>;
-  if (error) return <div className="text-red-500 text-center mt-10">{error}</div>;
+  if (loading)
+    return (
+      <div className="text-blue-600 text-center mt-10">
+        Loading job details...
+      </div>
+    );
+  if (error)
+    return <div className="text-red-500 text-center mt-10">{error}</div>;
 
   return (
-    <div className="max-w-4xl mx-auto mt-10 p-6 bg-white rounded shadow">
-      <Link
-        onClick={() => navigate(-1)}
-        className="text-sm mb-4 text-red-500 hover:text-red-700"
-      >
-        ← Back to Listings
-      </Link>
+    <div className="flex justify-center px-4 py-10">
+      <div className="w-full max-w-3xl bg-white rounded-2xl shadow-md p-8">
+        <Link
+          onClick={() => navigate(-1)}
+          className="text-sm text-blue-600 hover:underline mb-6"
+        >
+          ← Back to Listings
+        </Link>
 
-      <h2 className="text-2xl font-bold text-red-600 mb-2">{job.title}</h2>
-      <p className="text-sm text-gray-700 mb-1"><strong>Company:</strong> {job.company_name}</p>
-      <p className="text-sm text-gray-700 mb-1"><strong>Location:</strong> {job.location}</p>
-      <p className="text-sm text-gray-700 mb-1"><strong>Salary:</strong> {job.salary}</p>
-      <p className="text-sm text-gray-700 mb-1"><strong>Description:</strong> {job.description}</p>
-      <p className="text-sm text-gray-700 mb-1"><strong>Skills:</strong> {job.skills_required}</p>
-      <p className="text-sm text-gray-700 mb-1"><strong>Contact Email:</strong> {job.contact_email}</p>
-      <p className="text-sm text-gray-700 mb-1"><strong>Contact Mobile:</strong> {job.contact_mobile}</p>
-      <p className="text-sm text-gray-700 mb-1"><strong>Deadline:</strong> {new Date(job.last_date_of_apply).toLocaleDateString()}</p>
-      <p className="text-sm text-gray-700 mb-1"><strong>Perks:</strong> {job.perks}</p>
-      <p className="text-sm text-gray-700 mb-1"><strong>Qualification:</strong> {job.qualification_in}</p>
-      <p className="text-sm text-gray-700 mb-1"><strong>Specialization:</strong> {job.specialisation_in}</p>
-      <p className="text-sm text-gray-700"><strong>Terms:</strong> {job.terms}</p>
+        <h2 className="text-3xl font-bold text-center text-red-600 mb-2">
+          {job.title}
+        </h2>
+        <p className="text-center text-gray-600 mb-4 text-sm">
+          {job.company_name}
+        </p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-700 mb-6">
+          <DetailRow
+            icon={<FaMapMarkerAlt />}
+            label="Location"
+            value={job.location}
+          />
+          <DetailRow
+            icon={<FaMoneyBillWave />}
+            label="Salary"
+            value={job.salary}
+          />
+          <DetailRow
+            icon={<FaEnvelope />}
+            label="Email"
+            value={job.contact_email}
+          />
+          <DetailRow
+            icon={<FaPhoneAlt />}
+            label="Phone"
+            value={job.contact_mobile}
+          />
+          <DetailRow
+            icon={<FaClock />}
+            label="Apply By"
+            value={new Date(job.last_date_of_apply).toLocaleDateString()}
+          />
+          <DetailRow
+            icon={<FaGift />}
+            label="Perks"
+            value={job.perks || "None"}
+          />
+        </div>
+
+        <div className="space-y-4 text-sm text-gray-800">
+          <p>
+            <span className="font-semibold">Description:</span>{" "}
+            {job.description}
+          </p>
+          <p>
+            <span className="font-semibold">Skills Required:</span>{" "}
+            {job.skills_required}
+          </p>
+          <p>
+            <span className="font-semibold">Qualification:</span>{" "}
+            {job.qualification_in}
+            {" / "}
+            <span className="font-semibold">Specialization:</span>{" "}
+            {job.specialisation_in}
+          </p>
+          <p>
+            <span className="font-semibold">Terms:</span> {job.terms}
+          </p>
+        </div>
+      </div>
     </div>
   );
 };
+
+const DetailRow = ({ icon, label, value }) => (
+  <div className="flex items-center gap-2">
+    <span className="text-blue-500">{icon}</span>
+    <span className="text-gray-700">
+      <strong>{label}:</strong> {value}
+    </span>
+  </div>
+);
 
 export default JobDetail;

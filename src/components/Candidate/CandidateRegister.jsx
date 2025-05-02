@@ -42,7 +42,6 @@ const CandidateRegister = () => {
         "candidate/registration/",
         formData
       );
-      console.log("Registration successful:", response.data);
       alert("Candidate registered successfully!");
 
       // Reset form
@@ -69,102 +68,136 @@ const CandidateRegister = () => {
   };
 
   return (
-    <div className="max-w-xl mx-auto mt-20 p-6 rounded shadow">
-      <h2 className="text-2xl font-bold mb-6 text-red-600 text-center">
-        Candidate Registration
-      </h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          type="text"
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          placeholder="Full Name"
-          className="w-full px-4 py-2 rounded bg-gray-100 focus:outline-none"
-          required
-        />
-        <input
-          type="text"
-          name="mobile"
-          value={formData.mobile}
-          onChange={handleChange}
-          placeholder="Mobile Number"
-          className="w-full px-4 py-2 rounded bg-gray-100 focus:outline-none"
-          required
-        />
-        <input
-          type="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          placeholder="Email Address"
-          className="w-full px-4 py-2 rounded bg-gray-100 focus:outline-none"
-          required
-        />
-        <input
-          type="password"
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-          placeholder="Password"
-          className="w-full px-4 py-2 rounded bg-gray-100 focus:outline-none"
-          required
-        />
-        <select
-          name="work_status"
-          value={formData.candidate.work_status}
-          onChange={handleChange}
-          className="w-full px-4 py-2 rounded bg-gray-100 focus:outline-none"
-          required
-        >
-          <option value="">Select Work Status</option>
-          <option value="Experienced">Experienced</option>
-          <option value="Fresher">Fresher</option>
-        </select>
-        <div className="flex flex-col">
-          <label className="mb-1 text-sm text-gray-600" htmlFor="dob">
-            Date of Birth (DOB)
-          </label>
-          <input
-            type="date"
-            id="dob"
-            name="dob"
-            value={formData.candidate.dob}
-            onChange={handleChange}
-            className="w-full px-4 py-2 rounded bg-gray-100 focus:outline-none"
-            required
+    <div className="min-h-screen flex items-center justify-center p-6">
+      <div className="bg-white shadow-lg rounded-xl overflow-hidden flex flex-col md:flex-row w-full max-w-5xl">
+        {/* Left Side Image */}
+        <div className="md:w-1/2 hidden md:block">
+          <img
+            src="https://picsum.photos/id/3/700/480"
+            alt="Job search"
+            className="w-full h-full object-cover"
           />
         </div>
 
-        <select
-          name="gender"
-          value={formData.candidate.gender}
-          onChange={handleChange}
-          className="w-full px-4 py-2 rounded bg-gray-100 focus:outline-none"
-          required
-        >
-          <option value="">Select Gender</option>
-          <option value="Male">Male</option>
-          <option value="Female">Female</option>
-          <option value="Other">Other</option>
-        </select>
-        <input
-          type="text"
-          name="city"
-          value={formData.candidate.city}
-          onChange={handleChange}
-          placeholder="City"
-          className="w-full px-4 py-2 rounded bg-gray-100 focus:outline-none"
-          required
-        />
+        {/* Right Side Form */}
+        <div className="md:w-1/2 w-full p-8">
+          <h2 className="text-2xl font-bold text-red-600 mb-6 text-center">
+            Candidate Registration
+          </h2>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Input Fields with Labels */}
+            <div>
+              <label className="block mb-1 text-gray-700">Full Name</label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                className="w-full px-4 py-2 bg-gray-100 rounded"
+                required
+              />
+            </div>
 
-        <button
-          type="submit"
-          className="bg-red-600 w-full text-white px-4 py-2 rounded hover:bg-red-700 transition"
-        >
-          Register
-        </button>
-      </form>
+            <div>
+              <label className="block mb-1 text-gray-700">Mobile Number</label>
+              <input
+                type="text"
+                name="mobile"
+                value={formData.mobile}
+                onChange={handleChange}
+                className="w-full px-4 py-2 bg-gray-100 rounded"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block mb-1 text-gray-700">Email Address</label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                className="w-full px-4 py-2 bg-gray-100 rounded"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block mb-1 text-gray-700">Password</label>
+              <input
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                className="w-full px-4 py-2 bg-gray-100 rounded"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block mb-1 text-gray-700">Work Status</label>
+              <select
+                name="work_status"
+                value={formData.candidate.work_status}
+                onChange={handleChange}
+                className="w-full px-4 py-2 bg-gray-100 rounded"
+                required
+              >
+                <option value="">Select Work Status</option>
+                <option value="Experienced">Experienced</option>
+                <option value="Fresher">Fresher</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block mb-1 text-gray-700">Date of Birth</label>
+              <input
+                type="date"
+                name="dob"
+                value={formData.candidate.dob}
+                onChange={handleChange}
+                className="w-full px-4 py-2 bg-gray-100 rounded"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block mb-1 text-gray-700">Gender</label>
+              <select
+                name="gender"
+                value={formData.candidate.gender}
+                onChange={handleChange}
+                className="w-full px-4 py-2 bg-gray-100 rounded"
+                required
+              >
+                <option value="">Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block mb-1 text-gray-700">City</label>
+              <input
+                type="text"
+                name="city"
+                value={formData.candidate.city}
+                onChange={handleChange}
+                className="w-full px-4 py-2 bg-gray-100 rounded"
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="w-full bg-red-600 text-white py-2 mt-4 rounded hover:bg-red-700 transition"
+            >
+              Register
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
   );
 };

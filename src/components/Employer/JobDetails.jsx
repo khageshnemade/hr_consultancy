@@ -1,25 +1,32 @@
-import { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react'; // Import the left arrow icon
-import makeRequest from '../../axios';
+import { useState, useEffect } from "react";
+import { useParams, useNavigate, Link } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
+import {
+  FaMapMarkerAlt,
+  FaMoneyBillWave,
+  FaEnvelope,
+  FaTools,
+  FaClock,
+} from "react-icons/fa";
+import makeRequest from "../../axios";
 
 const JobDetails = () => {
-  const { job_id } = useParams(); // Get job_id from the URL
-  console.log("JobId",job_id);
-  
+  const { job_id } = useParams();
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-const navigate=useNavigate()
+  const navigate = useNavigate();
+
   useEffect(() => {
     const fetchJobDetails = async () => {
       try {
-        const response = await makeRequest.get(`employer/jobdetails/${job_id}/`);
-        const data = response.data;
-        setJob(data);
-        setLoading(false);
+        const response = await makeRequest.get(
+          `employer/jobdetails/${job_id}/`
+        );
+        setJob(response.data);
       } catch (err) {
-        setError('Failed to fetch job details');
+        setError("Failed to fetch job details.");
+      } finally {
         setLoading(false);
       }
     };
@@ -27,43 +34,76 @@ const navigate=useNavigate()
     fetchJobDetails();
   }, [job_id]);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>{error}</div>;
-  }
+  if (loading)
+    return (
+      <div className="text-center text-red-600 mt-10">
+        Loading job details...
+      </div>
+    );
+  if (error)
+    return <div className="text-center text-red-500 mt-10">{error}</div>;
 
   return (
-    <div className="max-w-4xl mx-auto mt-10 p-6 rounded-lg shadow-lg bg-white">
-      <h2 className="text-3xl font-bold mb-6 text-red-600">{job.title}</h2>
-      <div className="text-gray-600 text-sm">{job.role}</div>
-      <div className="mt-2 text-gray-700">
-        <span className="font-bold">Location:</span> {job.location}
-      </div>
-      <div>
-        <span className="font-bold">Salary:</span> {job.salary}
-      </div>
-      <div>
-        <span className="font-bold">Deadline:</span> {new Date(job.last_date_of_apply).toLocaleDateString()}
-      </div>
-      <div className="mt-2">
-        <span className="font-bold">Skills Required:</span> {job.skills_required}
-      </div>
-      <div className="mt-2">
-        <span className="font-bold">Contact:</span> {job.contact_email}
-      </div>
-      <div className="mt-4">
-        <span className="font-bold">Description:</span> {job.description}
-      </div>
+    <div className="min-h-screen bg-gray-50 py-10 px-4">
+      <div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-3xl font-bold text-red-600">{job.title}</h2>
+          <Link
+            onClick={() => navigate(-1)}
+            className="flex items-center text-red-600 hover:text-red-800 transition"
+          >
+            <ArrowLeft className="w-5 h-5 mr-1" />
+            Back
+          </Link>
+        </div>
 
-      {/* Back button */}
-      <Link  onClick={() => navigate(-1)}
-       className="mt-4 text-red-600 flex items-center">
-        <ArrowLeft className="mr-2" />
-        Back to Job Listings
-      </Link>
+        <div className="text-sm text-gray-600 mb-4">{job.role}</div>
+
+        <div className="grid md:grid-cols-2 gap-4 text-gray-800">
+          <div className="flex items-center">
+            <FaMapMarkerAlt className="text-red-400 mr-2" />
+            <span>
+              <strong>Location:</strong> {job.location}
+            </span>
+          </div>
+          <div className="flex items-center">
+            <FaMoneyBillWave className="text-green-400 mr-2" />
+            <span>
+              <strong>Salary:</strong> ₹{job.salary}
+            </span>
+          </div>
+          <div className="flex items-center">
+            <FaClock className="text-blue-400 mr-2" />
+            <span>
+              <strong>Deadline:</strong>{" "}
+              {new Date(job.last_date_of_apply).toLocaleDateString()}
+            </span>
+          </div>
+          <div className="flex items-center">
+            <FaEnvelope className="text-yellow-500 mr-2" />
+            <span>
+              <strong>Contact:</strong> {job.contact_email}
+            </span>
+          </div>
+        </div>
+
+        <div className="mt-6">
+          <h4 className="text-lg font-semibold mb-1 text-gray-700">
+            Skills Required:
+          </h4>
+          <p className="text-gray-600 flex items-start">
+            <FaTools className="text-gray-400 mt-1 mr-2" />
+            {job.skills_required}
+          </p>
+        </div>
+
+        <div className="mt-6">
+          <h4 className="text-lg font-semibold mb-1 text-gray-700">
+            Description:
+          </h4>
+          <p className="text-gray-600 leading-relaxed">{job.description}</p>
+        </div>
+      </div>
     </div>
   );
 };

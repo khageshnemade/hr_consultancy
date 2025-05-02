@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import makeRequest from "../../axios";
 import dayjs from "dayjs";
+import { FaBuilding, FaMapMarkerAlt, FaClock } from "react-icons/fa";
 
 const AppliedJobs = () => {
   const [jobs, setJobs] = useState([]);
@@ -21,21 +22,29 @@ const AppliedJobs = () => {
 
   if (loading) {
     return (
-      <div className="text-center mt-10 text-blue-600">Loading jobs...</div>
+      <div className="text-center mt-10 text-blue-600 text-lg">
+        Loading applied jobs...
+      </div>
     );
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
-      <h2 className="text-2xl md:text-3xl font-semibold text-gray-800 mb-6">
-        My Applied Jobs
+    <div className="max-w-6xl mx-auto px-4 py-10">
+      <h2 className="text-3xl font-bold text-gray-800 mb-8">
+        📄 My Applied Jobs
       </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {jobs.map((job) => (
-          <JobCard key={job.id} job={job} />
-        ))}
-      </div>
+      {jobs.length === 0 ? (
+        <div className="text-gray-500 text-center">
+          You haven’t applied for any jobs yet.
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {jobs.map((job) => (
+            <JobCard key={job.id} job={job} />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
@@ -51,27 +60,33 @@ const JobCard = ({ job }) => {
   const statusClass = statusStyles[job.status] || "bg-gray-100 text-gray-700";
 
   return (
-    <div className="border border-gray-200 rounded-lg shadow-sm p-5 hover:shadow-md transition">
-      <div className="flex justify-between items-start">
-        <h3 className="text-xl font-semibold text-gray-800">{job.job.title}</h3>
-        <span className={`text-sm px-3 py-1 rounded-full ${statusClass}`}>
+    <div className="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-lg transition-all p-6">
+      <div className="flex justify-between items-start mb-4">
+        <h3 className="text-xl font-semibold text-blue-700">{job.job.title}</h3>
+        <span
+          className={`text-xs font-medium px-3 py-1 rounded-full ${statusClass}`}
+        >
           {job.status}
         </span>
       </div>
 
-      <p className="text-gray-600 mt-2">{job.job.description}</p>
+      <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+        {job.job.description}
+      </p>
 
-      <div className="mt-4 flex flex-col gap-1 text-sm text-gray-500">
-        <span>
-          <strong>Location:</strong> {job.job.location}
-        </span>
-        <span>
-          <strong>Company:</strong> {job.job.company.company_name}
-        </span>
-        <span>
-          <strong>Applied On:</strong>{" "}
-          {dayjs(job.applied_on).format("DD MMM YYYY, hh:mm A")}
-        </span>
+      <div className="space-y-2 text-sm text-gray-700">
+        <div className="flex items-center gap-2">
+          <FaMapMarkerAlt className="text-orange-500" />
+          Location: {job.job.location}
+        </div>
+        <div className="flex items-center gap-2">
+          <FaBuilding className="text-indigo-500" />
+          Company: {job.job.company.company_name}
+        </div>
+        <div className="flex items-center gap-2">
+          <FaClock className="text-purple-500" />
+          Applied On: {dayjs(job.applied_on).format("DD MMM YYYY, hh:mm A")}
+        </div>
       </div>
     </div>
   );

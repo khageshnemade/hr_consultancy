@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import makeRequest from "../../axios";
+
 const EmployerRegister = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -72,120 +73,176 @@ const EmployerRegister = () => {
   };
 
   return (
-    <div className="max-w-xl mx-auto mt-20 p-6 rounded shadow">
-      <h2 className="text-2xl font-bold mb-6 text-red-600 text-center">
-        Employer Registration
-      </h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          type="text"
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          placeholder="Full Name"
-          className="w-full px-4 py-2 rounded bg-gray-100 focus:outline-none"
-          required
-        />
-        <input
-          type="text"
-          name="mobile"
-          value={formData.mobile}
-          onChange={handleChange}
-          placeholder="Mobile Number"
-          className="w-full px-4 py-2 rounded bg-gray-100 focus:outline-none"
-          required
-        />
-        <input
-          type="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          placeholder="Email"
-          className="w-full px-4 py-2 rounded bg-gray-100 focus:outline-none"
-          required
-        />
-        <input
-          type="password"
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-          placeholder="Password"
-          className="w-full px-4 py-2 rounded bg-gray-100 focus:outline-none"
-          required
-        />
-        <input
-          type="text"
-          name="company_name"
-          value={formData.employer.company_name}
-          onChange={handleChange}
-          placeholder="Company Name"
-          className="w-full px-4 py-2 rounded bg-gray-100 focus:outline-none"
-          required
-        />
-        <input
-          type="text"
-          name="industry_type"
-          value={formData.employer.industry_type}
-          onChange={handleChange}
-          placeholder="Industry Type"
-          className="w-full px-4 py-2 rounded bg-gray-100 focus:outline-none"
-        />
-        <input
-          type="text"
-          name="company_id_type"
-          value={formData.employer.company_id_type}
-          onChange={handleChange}
-          placeholder="Company ID Type (e.g., GST, PAN)"
-          className="w-full px-4 py-2 rounded bg-gray-100 focus:outline-none"
-        />
-        <input
-          type="text"
-          name="company_unique_id"
-          value={formData.employer.company_unique_id}
-          onChange={handleChange}
-          placeholder="Company Unique ID"
-          className="w-full px-4 py-2 rounded bg-gray-100 focus:outline-none"
-        />
-        <input
-          type="text"
-          name="reprsentative_name"
-          value={formData.employer.reprsentative_name}
-          onChange={handleChange}
-          placeholder="Representative Name"
-          className="w-full px-4 py-2 rounded bg-gray-100 focus:outline-none"
-        />
-        <input
-          type="text"
-          name="district"
-          value={formData.employer.district}
-          onChange={handleChange}
-          placeholder="District"
-          className="w-full px-4 py-2 rounded bg-gray-100 focus:outline-none"
-        />
-        <input
-          type="text"
-          name="taluka"
-          value={formData.employer.taluka}
-          onChange={handleChange}
-          placeholder="Taluka"
-          className="w-full px-4 py-2 rounded bg-gray-100 focus:outline-none"
-        />
-        <input
-          type="text"
-          name="city"
-          value={formData.employer.city}
-          onChange={handleChange}
-          placeholder="City"
-          className="w-full px-4 py-2 rounded bg-gray-100 focus:outline-none"
-        />
+    <div className="min-h-screen flex items-center justify-center p-0">
+      <div className="bg-white shadow-lg rounded-xl overflow-hidden flex flex-col md:flex-row w-full max-w-5xl">
+        {/* Left Side Image */}
+        <div className="md:w-1/2 hidden md:block">
+          <img
+            src="https://picsum.photos/id/1/700/480"
+            alt="Employer Registration"
+            className="w-full h-full object-cover"
+          />
+        </div>
 
-        <button
-          type="submit"
-          className="bg-red-600 w-full text-white px-4 py-2 rounded hover:bg-red-700 transition"
-        >
-          Register
-        </button>
-      </form>
+        {/* Right Side Form */}
+        <div className="md:w-1/2 w-full p-8">
+          <h2 className="text-2xl font-bold text-red-600 mb-6 text-center">
+            Employer Registration
+          </h2>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Input Fields with Labels */}
+            <div>
+              <label className="block mb-1 text-gray-700">Full Name</label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                className="w-full px-4 py-2 bg-gray-100 rounded"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block mb-1 text-gray-700">Mobile Number</label>
+              <input
+                type="text"
+                name="mobile"
+                value={formData.mobile}
+                onChange={handleChange}
+                className="w-full px-4 py-2 bg-gray-100 rounded"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block mb-1 text-gray-700">Email Address</label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                className="w-full px-4 py-2 bg-gray-100 rounded"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block mb-1 text-gray-700">Password</label>
+              <input
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                className="w-full px-4 py-2 bg-gray-100 rounded"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block mb-1 text-gray-700">Company Name</label>
+              <input
+                type="text"
+                name="company_name"
+                value={formData.employer.company_name}
+                onChange={handleChange}
+                className="w-full px-4 py-2 bg-gray-100 rounded"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block mb-1 text-gray-700">Industry Type</label>
+              <input
+                type="text"
+                name="industry_type"
+                value={formData.employer.industry_type}
+                onChange={handleChange}
+                className="w-full px-4 py-2 bg-gray-100 rounded"
+              />
+            </div>
+
+            <div>
+              <label className="block mb-1 text-gray-700">
+                Company ID Type (e.g., GST, PAN)
+              </label>
+              <input
+                type="text"
+                name="company_id_type"
+                value={formData.employer.company_id_type}
+                onChange={handleChange}
+                className="w-full px-4 py-2 bg-gray-100 rounded"
+              />
+            </div>
+
+            <div>
+              <label className="block mb-1 text-gray-700">
+                Company Unique ID
+              </label>
+              <input
+                type="text"
+                name="company_unique_id"
+                value={formData.employer.company_unique_id}
+                onChange={handleChange}
+                className="w-full px-4 py-2 bg-gray-100 rounded"
+              />
+            </div>
+
+            <div>
+              <label className="block mb-1 text-gray-700">
+                Representative Name
+              </label>
+              <input
+                type="text"
+                name="reprsentative_name"
+                value={formData.employer.reprsentative_name}
+                onChange={handleChange}
+                className="w-full px-4 py-2 bg-gray-100 rounded"
+              />
+            </div>
+
+            <div>
+              <label className="block mb-1 text-gray-700">District</label>
+              <input
+                type="text"
+                name="district"
+                value={formData.employer.district}
+                onChange={handleChange}
+                className="w-full px-4 py-2 bg-gray-100 rounded"
+              />
+            </div>
+
+            <div>
+              <label className="block mb-1 text-gray-700">Taluka</label>
+              <input
+                type="text"
+                name="taluka"
+                value={formData.employer.taluka}
+                onChange={handleChange}
+                className="w-full px-4 py-2 bg-gray-100 rounded"
+              />
+            </div>
+
+            <div>
+              <label className="block mb-1 text-gray-700">City</label>
+              <input
+                type="text"
+                name="city"
+                value={formData.employer.city}
+                onChange={handleChange}
+                className="w-full px-4 py-2 bg-gray-100 rounded"
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="w-full bg-red-600 text-white py-2 mt-4 rounded hover:bg-red-700 transition"
+            >
+              Register
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
   );
 };

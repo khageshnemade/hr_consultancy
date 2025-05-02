@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
 import makeRequest from "../../axios";
+import {
+  FaClipboardList,
+  FaCheckCircle,
+  FaUserCheck,
+  FaTimesCircle,
+} from "react-icons/fa";
 
 const Dashboard = () => {
   const [data, setData] = useState({
@@ -26,7 +32,7 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="text-center mt-10 text-primary animate-pulse">
+      <div className="text-center mt-10 text-blue-500 text-lg animate-pulse">
         Loading dashboard...
       </div>
     );
@@ -34,48 +40,53 @@ const Dashboard = () => {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-10">
-      <h2 className="text-2xl md:text-3xl font-semibold text-gray-800 mb-8">
-        Candidate Overview
+      <h2 className="text-3xl font-bold text-gray-800 mb-8">
+        📊 Candidate Dashboard
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
         <DashboardCard
           label="Applied"
           count={data.appliedcount}
-          border="border-blue-100"
-          textColor="text-blue-600"
+          icon={<FaClipboardList className="text-blue-500 text-2xl" />}
           bg="bg-blue-50"
+          border="border-blue-200"
+          textColor="text-blue-700"
         />
         <DashboardCard
           label="Shortlisted"
           count={data.shortlisted}
-          border="border-purple-100"
-          textColor="text-purple-600"
+          icon={<FaCheckCircle className="text-purple-500 text-2xl" />}
           bg="bg-purple-50"
+          border="border-purple-200"
+          textColor="text-purple-700"
         />
         <DashboardCard
           label="Selected"
           count={data.selected}
-          border="border-green-100"
-          textColor="text-green-600"
+          icon={<FaUserCheck className="text-green-500 text-2xl" />}
           bg="bg-green-50"
+          border="border-green-200"
+          textColor="text-green-700"
         />
         <DashboardCard
           label="Rejected"
           count={data.rejected}
-          border="border-red-100"
-          textColor="text-red-600"
+          icon={<FaTimesCircle className="text-red-500 text-2xl" />}
           bg="bg-red-50"
+          border="border-red-200"
+          textColor="text-red-700"
         />
       </div>
     </div>
   );
 };
 
-const DashboardCard = ({ label, count, bg, textColor, border }) => (
+const DashboardCard = ({ label, count, icon, bg, textColor, border }) => (
   <div
-    className={`rounded-xl shadow-sm ${bg} ${border} border p-5 text-center hover:shadow-md transition duration-300`}
+    className={`rounded-xl ${bg} ${border} border p-6 shadow hover:shadow-lg transition-all duration-300 text-center`}
   >
-    <h3 className={`text-md font-medium ${textColor}`}>{label}</h3>
+    <div className="flex justify-center items-center mb-3">{icon}</div>
+    <h4 className={`text-sm font-medium ${textColor}`}>{label}</h4>
     <p className={`text-3xl font-bold mt-2 ${textColor}`}>{count}</p>
   </div>
 );

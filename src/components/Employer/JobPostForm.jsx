@@ -1,133 +1,159 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import makeRequest from '../../axios';
+import React, { useState } from "react";
+import makeRequest from "../../axios";
 
 const JobPostForm = () => {
-    const [formData, setFormData] = useState({
-        job_type: 'Part Time',
-        title: '',
-        description: '',
-        role: '',
-        no_of_openings: '',
-        salary: '',
-        location: '',
-        skills_required: '',
-        contact_email: '',
-        contact_mobile: '',
-        last_date_of_apply: '2025-04-29',
-        perks: '',
-        qualification_in: '',
-        specialisation_in: '',
-        terms: '',
-        is_active: true,
-        company: 0,
+  const [formData, setFormData] = useState({
+    job_type: "Part Time",
+    title: "",
+    description: "",
+    role: "",
+    no_of_openings: "",
+    salary: "",
+    location: "",
+    skills_required: "",
+    contact_email: "",
+    contact_mobile: "",
+    last_date_of_apply: "2025-04-29",
+    perks: "",
+    qualification_in: "",
+    specialisation_in: "",
+    terms: "",
+    is_active: true,
+    company: 0,
+  });
+
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData({
+      ...formData,
+      [name]: type === "checkbox" ? checked : value,
     });
+  };
 
-    const [error, setError] = useState('');
-    const [success, setSuccess] = useState('');
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+    try {
+      await makeRequest.post("employer/addjob/", formData);
+      setSuccess("Job posted successfully!");
+    } catch (err) {
+      setError("Failed to post job. Please check your data.");
+    }
+  };
 
-    const handleChange = (e) => {
-        const { name, value, type, checked } = e.target;
-        setFormData({
-            ...formData,
-            [name]: type === 'checkbox' ? checked : value,
-        });
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setError('');
-        setSuccess('');
-        try {
-            const response = await makeRequest.post(
-                'employer/addjob/',
-                formData,
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                }
-            );
-            setSuccess('Job posted successfully!');
-        } catch (err) {
-            setError('Failed to post job. Please check your data.');
-        }
-    };
-
-    return (
-        <div className="max-w-md mx-auto mt-20 p-6 rounded shadow bg-white">
-            <h2 className="text-2xl font-bold mb-4 text-red-600">Post a Job</h2>
-            {error && <p className="text-red-500 mb-3 text-sm">{error}</p>}
-            {success && <p className="text-green-500 mb-3 text-sm">{success}</p>}
-            <form onSubmit={handleSubmit} className="space-y-4">
-                <select
-                    name="job_type"
-                    value={formData.job_type}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 rounded bg-gray-100 focus:outline-none"
-                    required
-                >
-                    <option value="Full Time">Full Time</option>
-                    <option value="Part Time">Part Time</option>
-                </select>
-                {[
-                    { name: 'title', placeholder: 'Job Title' },
-                    { name: 'description', placeholder: 'Job Description' },
-                    { name: 'role', placeholder: 'Job Role' },
-                    { name: 'no_of_openings', placeholder: 'No. of Openings', type: 'text' },
-                    { name: 'salary', placeholder: 'Salary' },
-                    { name: 'location', placeholder: 'Location' },
-                    { name: 'skills_required', placeholder: 'Skills Required' },
-                    { name: 'contact_email', placeholder: 'Contact Email', type: 'email' },
-                    { name: 'contact_mobile', placeholder: 'Contact Mobile' },
-                    { name: 'perks', placeholder: 'Perks' },
-                    { name: 'qualification_in', placeholder: 'Qualification In' },
-                    { name: 'specialisation_in', placeholder: 'Specialisation In' },
-                    { name: 'terms', placeholder: 'Terms & Conditions' },
-                    { name: 'company', placeholder: 'Company ID', type: 'text' },
-                ].map(({ name, placeholder, type = 'text' }) => (
-                    <input
-                        key={name}
-                        type={type}
-                        name={name}
-                        placeholder={placeholder}
-                        value={formData[name]}
-                        onChange={handleChange}
-                        className="w-full px-4 py-2 rounded bg-gray-100 focus:outline-none"
-                        required
-                    />
-                ))}
-
-                <div className="flex items-center">
-                    <label className="mr-2 text-sm">Active:</label>
-                    <input
-                        type="checkbox"
-                        name="is_active"
-                        checked={formData.is_active}
-                        onChange={handleChange}
-                        className="w-4 h-4"
-                    />
-                </div>
-
-
-                <input
-                    type="date"
-                    name="last_date_of_apply"
-                    value={formData.last_date_of_apply}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 rounded bg-gray-100 focus:outline-none"
-                    required
-                />
-
-                <button
-                    type="submit"
-                    className="w-full bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-                >
-                    Post Job
-                </button>
-            </form>
+  return (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+      <div className="bg-white shadow-lg rounded-xl overflow-hidden flex flex-col md:flex-row w-full max-w-6xl">
+        {/* Left Side Image */}
+        <div className="md:w-1/2 hidden md:block">
+          <img
+            src="https://picsum.photos/id/1062/600/800"
+            alt="Job Posting"
+            className="w-full h-full object-cover"
+          />
         </div>
-    );
+
+        {/* Right Side Form */}
+        <div className="md:w-1/2 w-full p-8 overflow-y-auto">
+          <h2 className="text-2xl font-bold text-red-600 mb-6 text-center">
+            Post a Job
+          </h2>
+          {error && (
+            <p className="text-red-500 mb-3 text-sm text-center">{error}</p>
+          )}
+          {success && (
+            <p className="text-green-500 mb-3 text-sm text-center">{success}</p>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Job Type */}
+            <div>
+              <label className="block mb-1 text-gray-700">Job Type</label>
+              <select
+                name="job_type"
+                value={formData.job_type}
+                onChange={handleChange}
+                className="w-full px-4 py-2 rounded bg-gray-100 focus:outline-none"
+                required
+              >
+                <option value="Full Time">Full Time</option>
+                <option value="Part Time">Part Time</option>
+              </select>
+            </div>
+
+            {/* Input Fields */}
+            {[
+              { name: "title", label: "Job Title" },
+              { name: "description", label: "Job Description" },
+              { name: "role", label: "Job Role" },
+              { name: "no_of_openings", label: "No. of Openings" },
+              { name: "salary", label: "Salary" },
+              { name: "location", label: "Location" },
+              { name: "skills_required", label: "Skills Required" },
+              { name: "contact_email", label: "Contact Email", type: "email" },
+              { name: "contact_mobile", label: "Contact Mobile" },
+              { name: "perks", label: "Perks" },
+              { name: "qualification_in", label: "Qualification In" },
+              { name: "specialisation_in", label: "Specialisation In" },
+              { name: "terms", label: "Terms & Conditions" },
+              { name: "company", label: "Company ID" },
+            ].map(({ name, label, type = "text" }) => (
+              <div key={name}>
+                <label className="block mb-1 text-gray-700">{label}</label>
+                <input
+                  type={type}
+                  name={name}
+                  value={formData[name]}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 rounded bg-gray-100 focus:outline-none"
+                  required
+                />
+              </div>
+            ))}
+
+            {/* Last Date of Apply */}
+            <div>
+              <label className="block mb-1 text-gray-700">
+                Last Date to Apply
+              </label>
+              <input
+                type="date"
+                name="last_date_of_apply"
+                value={formData.last_date_of_apply}
+                onChange={handleChange}
+                className="w-full px-4 py-2 rounded bg-gray-100 focus:outline-none"
+                required
+              />
+            </div>
+
+            {/* Active Checkbox */}
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                name="is_active"
+                checked={formData.is_active}
+                onChange={handleChange}
+                className="w-4 h-4"
+              />
+              <label className="text-gray-700">Job is Active</label>
+            </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              className="w-full bg-red-600 text-white py-2 rounded hover:bg-red-700 transition"
+            >
+              Post Job
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default JobPostForm;

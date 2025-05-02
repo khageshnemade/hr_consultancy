@@ -1,20 +1,27 @@
 import React, { useEffect, useState } from "react";
 import makeRequest from "../../axios";
-import { useParams } from "react-router-dom";
-import { FaUserAlt, FaEnvelope, FaPhoneAlt, FaCalendarAlt } from "react-icons/fa";
+import { useParams, useNavigate, Link } from "react-router-dom";
+import {
+  FaUserAlt,
+  FaBriefcase,
+  FaCalendarAlt,
+  FaCheckCircle,
+  FaArrowLeft,
+} from "react-icons/fa";
 
 const JobApplications = () => {
-  const { job_id } = useParams(); // Get the job_id from URL parameters
+  const { job_id } = useParams();
+  const navigate = useNavigate();
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchApplications = async () => {
       try {
-        const response = await makeRequest.get(`admin/getapplications/${job_id}/`);
+        const response = await makeRequest.get(
+          `admin/getapplications/${job_id}/`
+        );
         setApplications(response.data);
-        console.log("Data",response.data);
-        
       } catch (error) {
         console.error("Error fetching applications:", error);
       } finally {
@@ -26,41 +33,62 @@ const JobApplications = () => {
   }, [job_id]);
 
   if (loading) {
-    return <div className="text-center p-6 text-gray-500">Loading applications...</div>;
+    return (
+      <div className="text-center p-6 text-gray-500">
+        Loading applications...
+      </div>
+    );
   }
 
   return (
-    <div className="p-4 max-w-5xl mx-auto">
-      <h2 className="text-3xl font-bold text-gradient mb-6">Applications for Job ID: {job_id}</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {applications.length === 0 ? (
-          <p className="text-md text-gray-600">No applications received yet.</p>
-        ) : (
-          applications.map((app, index) => (
-            <div key={index} className="bg-white rounded-xl shadow-md border border-gray-200 p-4 transition-all duration-300 hover:shadow-lg hover:scale-105 hover:bg-gray-50">
-              <h3 className="text-xl font-semibold text-blue-700 mb-3">{app.name}</h3>
-              <p className="text-sm text-gray-700 mb-3">{app.cover_letter}</p>
+    <div className="p-6 max-w-6xl mx-auto mt-4">
+      {/* Back Button */}
+      <Link
+        onClick={() => navigate(-1)}
+        className="flex items-center text-sm text-blue-600 hover:text-blue-800 mb-4"
+      >
+        <FaArrowLeft className="mr-2" />
+        Back
+      </Link>
 
-              <div className="flex items-center text-sm text-gray-600 mb-2">
-                <FaUserAlt className="mr-2 text-blue-600" />
-                <span>{app.name}</span>
+      <h2 className="text-2xl md:text-3xl font-bold text-red-600 mb-6">
+        Applications for Job ID: {job_id}
+      </h2>
+
+      {applications.length === 0 ? (
+        <p className="text-md text-gray-600">No applications received yet.</p>
+      ) : (
+        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+          {applications.map((app) => (
+            <div
+              key={app.id}
+              className="bg-white border border-gray-200 rounded-xl shadow hover:shadow-lg transition-transform hover:-translate-y-1 p-5"
+            >
+              <div className="mb-4">
+                <h3 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
+                  <FaUserAlt className="text-red-500" />
+                  {app.candidate_name}
+                </h3>
+                <p className="text-sm text-gray-600 mt-1 flex items-center gap-2">
+                  <FaBriefcase className="text-blue-500" />
+                  Role: {app.role}
+                </p>
               </div>
-              <div className="flex items-center text-sm text-gray-600 mb-2">
-                <FaEnvelope className="mr-2 text-green-500" />
-                <span>{app.email}</span>
-              </div>
-              <div className="flex items-center text-sm text-gray-600 mb-2">
-                <FaPhoneAlt className="mr-2 text-orange-500" />
-                <span>{app.mobile}</span>
-              </div>
-              <div className="flex items-center text-sm text-gray-600 mb-2">
-                <FaCalendarAlt className="mr-2 text-purple-500" />
-                <span>Applied on: {new Date(app.date_applied).toLocaleDateString()}</span>
+
+              <div className="text-sm text-gray-700 space-y-2">
+                <p className="flex items-center gap-2">
+                  <FaCalendarAlt className="text-purple-500" />
+                  Applied on: {new Date(app.applied_on).toLocaleDateString()}
+                </p>
+                <p className="flex items-center gap-2">
+                  <FaCheckCircle className="text-green-600" />
+                  Status: <span className="font-medium">{app.status}</span>
+                </p>
               </div>
             </div>
-          ))
-        )}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

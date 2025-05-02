@@ -1,5 +1,15 @@
 import React, { useEffect, useState } from "react";
 import makeRequest from "../../axios";
+import {
+  FaUser,
+  FaEnvelope,
+  FaPhoneAlt,
+  FaTransgender,
+  FaCity,
+  FaBirthdayCake,
+  FaUserTie,
+  FaBriefcase,
+} from "react-icons/fa";
 
 const CandidateProfile = () => {
   const [profile, setProfile] = useState(null);
@@ -23,8 +33,7 @@ const CandidateProfile = () => {
           city: res.data.candidate.city,
         });
       })
-      .catch((err) => {
-        console.error("Failed to fetch profile", err);
+      .catch(() => {
         setMessage("Failed to load profile");
       });
   }, []);
@@ -41,7 +50,7 @@ const CandidateProfile = () => {
     makeRequest
       .put("candidate/profiledetails/", formData)
       .then(() => {
-        setMessage("Profile updated successfully!");
+        setMessage("✅ Profile updated successfully!");
         setEditMode(false);
         setProfile((prev) => ({
           ...prev,
@@ -55,9 +64,8 @@ const CandidateProfile = () => {
           },
         }));
       })
-      .catch((err) => {
-        console.error("Error updating profile", err);
-        setMessage("Failed to update profile");
+      .catch(() => {
+        setMessage("❌ Failed to update profile");
       });
   };
 
@@ -65,52 +73,63 @@ const CandidateProfile = () => {
     return <div className="text-center mt-10">Loading profile...</div>;
 
   return (
-    <div className="max-w-3xl mx-auto mt-10 p-6 bg-white shadow rounded">
-      <h2 className="text-2xl font-bold text-red-600 mb-4">
+    <div className="max-w-3xl mx-auto mt-10 p-8 bg-gray-50 rounded-xl shadow-sm">
+      <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
         Candidate Profile
       </h2>
+
       {message && (
-        <p className="text-sm mb-4 text-center text-red-500">{message}</p>
+        <p className="text-center mb-4 text-sm text-green-600 font-medium">
+          {message}
+        </p>
       )}
 
       {editMode ? (
         <form
           onSubmit={handleSubmit}
-          className="grid gap-4 grid-cols-1 sm:grid-cols-2 text-sm text-gray-700"
+          className="grid grid-cols-1 sm:grid-cols-2 gap-5 text-sm"
         >
           {[
-            "name",
-            "mobile",
-            "email",
-            "role",
-            "work_status",
-            "gender",
-            "dob",
-            "city",
-          ].map((field) => (
-            <input
-              key={field}
-              name={field}
-              type="text"
-              value={formData[field] || ""}
-              onChange={handleChange}
-              className="px-4 py-2 bg-gray-100 rounded"
-              placeholder={field.replace(/_/g, " ").toUpperCase()}
-              required
-            />
+            { name: "name", label: "Full Name" },
+            { name: "mobile", label: "Mobile" },
+            { name: "email", label: "Email" },
+            { name: "role", label: "Role" },
+            { name: "work_status", label: "Work Status" },
+            { name: "gender", label: "Gender" },
+            { name: "dob", label: "Date of Birth" },
+            { name: "city", label: "City" },
+          ].map(({ name, label }) => (
+            <div key={name}>
+              <label
+                htmlFor={name}
+                className="block text-gray-600 mb-1 font-medium"
+              >
+                {label}
+              </label>
+              <input
+                id={name}
+                name={name}
+                type="text"
+                value={formData[name] || ""}
+                onChange={handleChange}
+                className="w-full px-4 py-2 rounded-lg bg-white shadow-sm focus:ring-2 focus:ring-red-400 focus:outline-none"
+                placeholder={`Enter ${label}`}
+                required
+              />
+            </div>
           ))}
 
-          <div className="col-span-2 flex gap-4 mt-2">
+          <div className="col-span-2 flex justify-end gap-4 mt-4">
             <button
               type="submit"
-              className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
+              className="bg-red-600 text-white px-5 py-2 rounded-lg hover:bg-red-700 transition"
             >
-              Save Changes
+              Save
             </button>
             <button
               type="button"
               onClick={() => setEditMode(false)}
-              className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400 transition"
+              className="bg-gray-300 px-5 py-2 rounded-lg hover:bg-gray-400 transition"
             >
               Cancel
             </button>
@@ -118,47 +137,71 @@ const CandidateProfile = () => {
         </form>
       ) : (
         <>
-          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 text-sm text-gray-700">
-            <p>
-              <span className="font-semibold">Name:</span> {profile.name}
-            </p>
-            <p>
-              <span className="font-semibold">Mobile:</span> {profile.mobile}
-            </p>
-            <p>
-              <span className="font-semibold">Email:</span> {profile.email}
-            </p>
-            <p>
-              <span className="font-semibold">Role:</span> {profile.role}
-            </p>
-            <p>
-              <span className="font-semibold">Work Status:</span>{" "}
-              {profile.candidate.work_status}
-            </p>
-            <p>
-              <span className="font-semibold">Gender:</span>{" "}
-              {profile.candidate.gender}
-            </p>
-            <p>
-              <span className="font-semibold">Date of Birth:</span>{" "}
-              {profile.candidate.dob}
-            </p>
-            <p>
-              <span className="font-semibold">City:</span>{" "}
-              {profile.candidate.city}
-            </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 text-sm text-gray-800">
+            <ProfileItem
+              icon={<FaUser />}
+              label="Full Name"
+              value={profile.name}
+            />
+            <ProfileItem
+              icon={<FaPhoneAlt />}
+              label="Mobile"
+              value={profile.mobile}
+            />
+            <ProfileItem
+              icon={<FaEnvelope />}
+              label="Email"
+              value={profile.email}
+            />
+            <ProfileItem
+              icon={<FaUserTie />}
+              label="Role"
+              value={profile.role}
+            />
+            <ProfileItem
+              icon={<FaBriefcase />}
+              label="Work Status"
+              value={profile.candidate.work_status}
+            />
+            <ProfileItem
+              icon={<FaTransgender />}
+              label="Gender"
+              value={profile.candidate.gender}
+            />
+            <ProfileItem
+              icon={<FaBirthdayCake />}
+              label="Date of Birth"
+              value={profile.candidate.dob}
+            />
+            <ProfileItem
+              icon={<FaCity />}
+              label="City"
+              value={profile.candidate.city}
+            />
           </div>
 
-          <button
-            onClick={() => setEditMode(true)}
-            className="mt-6 inline-block bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
-          >
-            Update Profile
-          </button>
+          <div className="flex justify-end mt-6">
+            <button
+              onClick={() => setEditMode(true)}
+              className="bg-red-600 text-white px-5 py-2 rounded-lg hover:bg-red-700 transition"
+            >
+              Update Profile
+            </button>
+          </div>
         </>
       )}
     </div>
   );
 };
+
+const ProfileItem = ({ label, value, icon }) => (
+  <div className="flex items-center gap-3 bg-white p-3 rounded-md shadow-sm">
+    <span className="text-red-500 text-lg">{icon}</span>
+    <div>
+      <p className="text-gray-500 font-medium">{label}</p>
+      <p className="text-gray-800">{value}</p>
+    </div>
+  </div>
+);
 
 export default CandidateProfile;

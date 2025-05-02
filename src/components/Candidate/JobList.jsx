@@ -1,27 +1,41 @@
-import React, { useEffect, useState } from 'react';
-import makeRequest from '../../axios';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import makeRequest from "../../axios";
+import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 import {
   FaMapMarkerAlt,
   FaBriefcase,
   FaMoneyBillWave,
   FaCalendarAlt,
-} from 'react-icons/fa';
+} from "react-icons/fa";
 
 const JobList = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const fetchJobs = async () => {
     try {
-      const response = await makeRequest.get('candidate/search-jobs/');
+      const response = await makeRequest.get("candidate/search-jobs/");
       setJobs(response.data);
     } catch (err) {
       console.error(err);
-      setError('Failed to fetch jobs');
+      setError("Failed to fetch jobs");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleApply = async (jobId) => {
+    try {
+      const response = await makeRequest.post("candidate/job-apply/", {
+        status: "Pending",
+        job: jobId,
+      });
+      toast.success("Successfully applied to job!");
+    } catch (error) {
+      console.error("Failed to apply:", error);
+      toast.error("Failed to apply. Please try again.");
     }
   };
 
@@ -31,7 +45,9 @@ const JobList = () => {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
-      <h2 className="text-3xl font-bold text-gray-800 mb-6">🔥 Latest Job Openings</h2>
+      <h2 className="text-3xl font-bold text-gray-800 mb-6">
+        🔥 Latest Job Openings
+      </h2>
 
       {loading && <div className="text-blue-500">Loading jobs...</div>}
       {error && <div className="text-red-500">{error}</div>}
@@ -43,7 +59,9 @@ const JobList = () => {
             className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all p-5"
           >
             <div className="mb-2">
-              <h3 className="text-xl font-semibold text-blue-700">{job.title}</h3>
+              <h3 className="text-xl font-semibold text-blue-700">
+                {job.title}
+              </h3>
               <p className="text-sm text-gray-500">{job.company_name}</p>
             </div>
 
@@ -58,21 +76,30 @@ const JobList = () => {
               </p>
               <p className="flex items-center gap-2">
                 <FaMoneyBillWave className="text-green-600" />
-                <span>{job.salary || 'Not specified'}</span>
+                <span>{job.salary || "Not specified"}</span>
               </p>
               <p className="flex items-center gap-2">
                 <FaCalendarAlt className="text-red-500" />
-                <span>Apply by: {new Date(job.last_date_of_apply).toLocaleDateString()}</span>
+                <span>
+                  Apply by:{" "}
+                  {new Date(job.last_date_of_apply).toLocaleDateString()}
+                </span>
               </p>
             </div>
 
-            <div className="mt-4 text-right">
+            <div className="mt-4 flex justify-between items-center">
               <Link
-                to={`/candidate/job-details/${job.id}`}
-                className="inline-block text-sm text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md transition"
+                to={`/candidate/job-details/${job.job_id}`}
+                className="text-sm text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md transition"
               >
                 View Details
               </Link>
+              <button
+                onClick={() => handleApply(job.id)}
+                className="text-sm text-white bg-green-600 hover:bg-green-700 px-4 py-2 rounded-md transition"
+              >
+                Apply Now
+              </button>
             </div>
           </div>
         ))}
