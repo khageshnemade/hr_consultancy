@@ -36,6 +36,7 @@ const Routers = () => {
         <Route path="login" element={<LoginForm />} />
         <Route path="about" element={<About />} />
 
+        {/* ---------------------------------------Admin------------------------------------------------------- */}
         <Route path="admin/dashboard" element={<AdminDashboard />} />
         <Route path="admin/candidates" element={<Candidates />} />
         <Route
@@ -52,7 +53,7 @@ const Routers = () => {
           element={<JobApplications />}
         />
         <Route path="/admin/employer/:org_id" element={<EmployerDetail />} />
-
+        {/* ---------------------------------------Candidate------------------------------------------------------- */}
         <Route path="candidate" element={<CandidateRegister />} />
         <Route path="candidate/jobs" element={<JobList />} />
         <Route path="candidate/dashboard" element={<Dashboard />} />
@@ -60,7 +61,7 @@ const Routers = () => {
         <Route path="candidate/applied_jobs" element={<AppliedJobs />} />
         <Route path="/candidate/job-details/:jobId" element={<JobDetail />} />
 
-
+        {/* ---------------------------------------Employer------------------------------------------------------- */}
         <Route path="employer" element={<EmployerRegister />} />
         <Route path="employer/post" element={<JobPostForm />} />
         <Route path="employer/dashboard" element={<EmployerDashboard />} />
