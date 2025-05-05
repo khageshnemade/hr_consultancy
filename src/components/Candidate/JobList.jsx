@@ -8,15 +8,23 @@ import {
   FaMoneyBillWave,
   FaCalendarAlt,
 } from "react-icons/fa";
+import SearchBar from "../SearchBar";
 
 const JobList = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const fetchJobs = async () => {
+  const fetchJobs = async (filters = {}) => {
     try {
-      const response = await makeRequest.get("candidate/search-jobs/");
+      setLoading(true);
+
+      const params = new URLSearchParams();
+      if (filters.title) params.append("title", filters.title);
+      if (filters.location) params.append("location", filters.location);
+
+      const url = `candidate/search-jobs/?${params.toString()}`;
+      const response = await makeRequest.get(url);
       setJobs(response.data);
     } catch (err) {
       console.error(err);
@@ -28,7 +36,7 @@ const JobList = () => {
 
   const handleApply = async (jobId) => {
     try {
-      const response = await makeRequest.post("candidate/job-apply/", {
+      await makeRequest.post("candidate/job-apply/", {
         status: "Pending",
         job: jobId,
       });
@@ -40,20 +48,23 @@ const JobList = () => {
   };
 
   useEffect(() => {
-    fetchJobs();
+    fetchJobs(); // Initial fetch with no filters
   }, []);
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
-      <h2 className="text-3xl font-bold text-gray-800 mb-6">
-        🔥 Latest Job Openings
-      </h2>
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6 gap-4">
+        <h2 className="text-3xl font-bold text-gray-800">
+          🔥 Latest Job Openings
+        </h2>
+        <SearchBar onSearch={fetchJobs} />
+      </div>
 
       {loading && <div className="text-blue-500">Loading jobs...</div>}
       {error && <div className="text-red-500">{error}</div>}
 
-      <div className="grid sm:grid-cols-2 gap-6">
-        {jobs?.map((job) => (
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
+      {jobs?.map((job) => (
           <div
             key={job.id}
             className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all p-5"

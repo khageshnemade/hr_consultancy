@@ -69,11 +69,12 @@ const CandidateRegister = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-6">
-      <div className="bg-white shadow-lg rounded-xl overflow-hidden flex flex-col md:flex-row w-full max-w-5xl">
-        {/* Left Side Image */}
+<div className="bg-white shadow-lg rounded-xl overflow-hidden flex flex-col md:flex-row w-full max-w-5xl items-stretch">
+{/* Left Side Image */}
         <div className="md:w-1/2 hidden md:block">
           <img
-            src="https://picsum.photos/id/3/700/480"
+            // src="https://picsum.photos/id/3/700/480"
+            src="/images/candidate_register.png"
             alt="Job search"
             className="w-full h-full object-cover"
           />

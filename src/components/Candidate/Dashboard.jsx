@@ -6,6 +6,8 @@ import {
   FaUserCheck,
   FaTimesCircle,
 } from "react-icons/fa";
+import { useDispatch } from "react-redux";
+import { setProfileData } from "../../../redux/features/profileSlice";
 
 const Dashboard = () => {
   const [data, setData] = useState({
@@ -17,18 +19,32 @@ const Dashboard = () => {
 
   const [loading, setLoading] = useState(true);
 
+  const dispatch = useDispatch();
+
   useEffect(() => {
-    makeRequest
-      .get("candidate/dashboard/")
-      .then((res) => {
-        setData(res.data);
+    const fetchData = async () => {
+      try {
+        const [dashboardRes, profileRes] = await Promise.all([
+          makeRequest.get("candidate/dashboard/"),
+          makeRequest.get("candidate/profiledetails/"),
+        ]);
+  
+        setData(dashboardRes.data);
+  
+        // ✅ Extract only needed fields
+        const { name, email, work_status, profile_pic } = profileRes.data;
+  
+        dispatch(setProfileData({ name, email, work_status, profile_pic }));
+      } catch (err) {
+        console.error("Error fetching candidate data:", err);
+      } finally {
         setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Error fetching dashboard data:", err);
-        setLoading(false);
-      });
-  }, []);
+      }
+    };
+  
+    fetchData();
+  }, [dispatch]);
+  
 
   if (loading) {
     return (

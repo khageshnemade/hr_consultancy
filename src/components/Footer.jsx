@@ -13,7 +13,7 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-sm text-gray-600 dark:text-gray-300">
         {/* Branding or Logo */}
         <div className="mb-4 md:mb-0 font-semibold text-lg text-gray-800 dark:text-white">
-          MyCompany
+          HR Consultancy
         </div>
 
         {/* Social Icons */}
@@ -35,7 +35,7 @@ const Footer = () => {
 
       {/* Copyright */}
       <div className="mt-6 text-center text-xs text-gray-500 dark:text-gray-400">
-        &copy; {new Date().getFullYear()} MyCompany. All rights reserved.
+        &copy; {new Date().getFullYear()} HR Consultancy. All rights reserved.
       </div>
     </footer>
   );

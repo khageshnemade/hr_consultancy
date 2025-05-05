@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { loginSuccess } from "../../redux/features/authSlice";
 
 const LoginForm = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -28,6 +31,7 @@ const LoginForm = () => {
         "user",
         JSON.stringify({ token: access, refresh, role })
       );
+      dispatch(loginSuccess({ token: access, refresh, role }));
 
       // Redirect or show success
       alert("Login successful!");
@@ -45,7 +49,7 @@ const LoginForm = () => {
         {/* Left Side Image */}
         <div className="md:w-1/2 hidden md:block">
           <img
-            src="https://picsum.photos/id/700/480" // Replace with a random or desired image
+            src="/images/login_pic.png"
             alt="Login Illustration"
             className="w-full h-full object-cover rounded-l-xl"
           />

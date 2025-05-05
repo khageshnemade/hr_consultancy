@@ -78,7 +78,8 @@ const EmployerRegister = () => {
         {/* Left Side Image */}
         <div className="md:w-1/2 hidden md:block">
           <img
-            src="https://picsum.photos/id/1/700/480"
+            // src="https://picsum.photos/id/1/700/480"
+            src="/images/employer_register.png"
             alt="Employer Registration"
             className="w-full h-full object-cover"
           />
