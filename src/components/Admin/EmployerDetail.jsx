@@ -39,9 +39,19 @@ const EmployerDetail = () => {
     <div className="p-4 max-w-3xl mx-auto bg-white shadow rounded-lg text-sm">
       {/* Header */}
       <div className="flex items-center gap-3 mb-4">
-        <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white flex items-center justify-center text-lg font-semibold">
-          {employer.company_name?.charAt(0).toUpperCase() || "?"}
-        </div>
+      <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-r from-blue-500 to-teal-400">
+                {employer.organization_logo ? (
+                  <img
+                    src={`https://consultancy.scholarnet.in/${employer.organization_logo}`}
+                    alt={`${employer.company_name} logo`}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="flex items-center justify-center w-full h-full bg-gray-300 text-white text-lg font-semibold">
+                    {employer.company_name?.charAt(0).toUpperCase() || "?"}
+                  </div>
+                )}
+              </div>
         <div>
           <h2 className="text-xl font-semibold text-gray-800">{employer.company_name}</h2>
           <p className="text-xs text-gray-500 flex items-center gap-1">

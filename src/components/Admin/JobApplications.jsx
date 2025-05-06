@@ -52,7 +52,7 @@ const JobApplications = () => {
       </Link>
 
       <h2 className="text-2xl md:text-3xl font-bold text-red-600 mb-6">
-        Applications for Job ID: {job_id}
+        Applications for  {applications[0].company_name}
       </h2>
 
       {applications.length === 0 ? (

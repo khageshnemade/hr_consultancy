@@ -2,23 +2,33 @@ import React, { useEffect, useState } from "react";
 import makeRequest from "../../axios";
 import dayjs from "dayjs";
 import { FaBuilding, FaMapMarkerAlt, FaClock } from "react-icons/fa";
+import { useParams } from "react-router-dom";
 
 const AppliedJobs = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const { status } = useParams();
   useEffect(() => {
     makeRequest
       .get("candidate/applied-jobs/")
       .then((res) => {
-        setJobs(res.data);
+        let allJobs = res.data;
+        if (status) {
+          // Normalize for consistent casing
+          console.log(status);
+          
+          const normalizedStatus = status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
+          console.log(normalizedStatus);
+          allJobs = allJobs.filter((job) => job.status === normalizedStatus);
+        }
+        setJobs(allJobs);
         setLoading(false);
       })
       .catch((err) => {
         console.error("Error fetching applied jobs:", err);
         setLoading(false);
       });
-  }, []);
+  }, [status]);
 
   if (loading) {
     return (

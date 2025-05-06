@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import makeRequest from "../../axios";
 import { setProfileData } from "../../../redux/features/profileSlice";
+import { Link } from "react-router-dom";
 
 const EmployerDashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
@@ -41,11 +42,12 @@ const EmployerDashboard = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="p-4 bg-green-100 rounded-lg shadow-md">
+          <Link to={'/employer/jobs'}>   <div className="p-4 bg-green-100 rounded-lg shadow-md">
             <h3 className="text-xl font-semibold text-green-700">Job Count</h3>
             <p className="text-2xl text-green-600">{dashboardData.job_count}</p>
-          </div>
-          <div className="p-4 bg-blue-100 rounded-lg shadow-md">
+          </div></Link>
+      <Link to={"/employer/applications"}>
+      <div className="p-4 bg-blue-100 rounded-lg shadow-md">
             <h3 className="text-xl font-semibold text-blue-700">
               Application Count
             </h3>
@@ -53,6 +55,8 @@ const EmployerDashboard = () => {
               {dashboardData.application_count}
             </p>
           </div>
+      </Link>
+       
         </div>
       )}
     </div>

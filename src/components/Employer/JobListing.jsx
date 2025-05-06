@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import makeRequest from "../../axios";
 import { Link } from "react-router-dom";
-import { FaEye, FaTrash, FaPen, FaPaperPlane } from "react-icons/fa";
+import { FaEye, FaTrash, FaPen, FaPaperPlane, FaPlus } from "react-icons/fa";
 import { Tooltip } from "react-tooltip";
 import "react-tooltip/dist/react-tooltip.css";
-
+import { HiOutlinePlusCircle } from "react-icons/hi";
 const JobListings = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -43,9 +43,18 @@ const JobListings = () => {
   return (
     <div className="min-h-screen bg-gray-100 py-10 px-4">
       <div className="max-w-6xl mx-auto bg-white p-8 rounded-lg shadow">
-        <h2 className="text-3xl font-bold mb-6 text-red-600 text-center">
-          Job Listings
-        </h2>
+        {/* Heading and Add Button */}
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-3xl font-bold text-red-600">Job Listings</h2>
+          <Link
+            to="/employer/post"
+            data-tooltip-id="add-job"
+            className="bg-green-600 hover:bg-green-700 p-2 rounded text-white"
+          >
+            <HiOutlinePlusCircle className="text-lg" />
+            <Tooltip id="add-job" content="Add New Job" />
+          </Link>
+        </div>
 
         {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
 
@@ -64,31 +73,17 @@ const JobListings = () => {
                 <p className="text-sm text-gray-600 mb-2">{job.role}</p>
 
                 <div className="text-sm text-gray-800 space-y-1">
-                  <p>
-                    <strong>Location:</strong> {job.location}
-                  </p>
-                  <p>
-                    <strong>Salary:</strong> ₹{job.salary}
-                  </p>
-                  <p>
-                    <strong>Deadline:</strong>{" "}
-                    {new Date(job.last_date_of_apply).toLocaleDateString()}
-                  </p>
-                  <p>
-                    <strong>Skills:</strong> {job.skills_required}
-                  </p>
-                  <p>
-                    <strong>Contact:</strong> {job.contact_email}
-                  </p>
+                  <p><strong>Location:</strong> {job.location}</p>
+                  <p><strong>Salary:</strong> ₹{job.salary}</p>
+                  <p><strong>Deadline:</strong> {new Date(job.last_date_of_apply).toLocaleDateString()}</p>
+                  <p><strong>Skills:</strong> {job.skills_required}</p>
+                  <p><strong>Contact:</strong> {job.contact_email}</p>
                 </div>
 
                 <div className="mt-4 flex items-center justify-between">
                   <span
-                    className={`text-xs px-3 py-1 rounded-full font-medium ${
-                      job.is_active
-                        ? "bg-green-200 text-green-800"
-                        : "bg-red-200 text-red-800"
-                    }`}
+                    className={`text-xs px-3 py-1 rounded-full font-medium ${job.is_active ? "bg-green-200 text-green-800" : "bg-red-200 text-red-800"
+                      }`}
                   >
                     {job.is_active ? "Active" : "Inactive"}
                   </span>
@@ -100,10 +95,7 @@ const JobListings = () => {
                       className="bg-purple-500 hover:bg-purple-600 p-2 rounded"
                     >
                       <FaPaperPlane />
-                      <Tooltip
-                        id={`app-${job.job_id}`}
-                        content="View Applications"
-                      />
+                      <Tooltip id={`app-${job.job_id}`} content="View Applications" />
                     </Link>
 
                     <Link
@@ -112,10 +104,7 @@ const JobListings = () => {
                       className="bg-blue-500 hover:bg-blue-600 p-2 rounded"
                     >
                       <FaEye />
-                      <Tooltip
-                        id={`view-${job.job_id}`}
-                        content="View Details"
-                      />
+                      <Tooltip id={`view-${job.job_id}`} content="View Details" />
                     </Link>
 
                     <Link
@@ -124,23 +113,17 @@ const JobListings = () => {
                       className="bg-yellow-500 hover:bg-yellow-600 p-2 rounded"
                     >
                       <FaPen />
-                      <Tooltip
-                        id={`update-${job.job_id}`}
-                        content="Update Job"
-                      />
+                      <Tooltip id={`update-${job.job_id}`} content="Update Job" />
                     </Link>
 
-                    <Link
+                    <button
                       onClick={() => handleDelete(job.job_id)}
                       data-tooltip-id={`delete-${job.job_id}`}
                       className="bg-red-500 hover:bg-red-600 p-2 rounded"
                     >
                       <FaTrash />
-                      <Tooltip
-                        id={`delete-${job.job_id}`}
-                        content="Delete Job"
-                      />
-                    </Link>
+                      <Tooltip id={`delete-${job.job_id}`} content="Delete Job" />
+                    </button>
                   </div>
                 </div>
               </div>

@@ -27,6 +27,7 @@ import EmployerDetail from "./components/Admin/EmployerDetail";
 import CandidateDetails from "./components/Admin/CandidateDetails";
 import ApplicationView from "./components/Employer/ApplicationView";
 import UpdateApplicationStatus from "./components/Employer/UpdateApplicationStatus ";
+import EmpApplications from "./components/Employer/EmApplications";
 
 const Routers = () => {
   return (
@@ -49,7 +50,7 @@ const Routers = () => {
           element={<AdminJobDetails />}
         />
         <Route
-          path="admin/applications/:company_name/:job_id"
+          path="admin/applications/:job_id"
           element={<JobApplications />}
         />
         <Route path="/admin/employer/:org_id" element={<EmployerDetail />} />
@@ -59,6 +60,7 @@ const Routers = () => {
         <Route path="candidate/dashboard" element={<Dashboard />} />
         <Route path="candidate/profile" element={<CandidateProfile />} />
         <Route path="candidate/applied_jobs" element={<AppliedJobs />} />
+        <Route path="candidate/applied_jobs/:status" element={<AppliedJobs />} />
         <Route path="/candidate/job-details/:jobId" element={<JobDetail />} />
 
         {/* ---------------------------------------Employer------------------------------------------------------- */}
@@ -68,6 +70,10 @@ const Routers = () => {
         <Route
           path="/employer/applications/:title/:job_id"
           element={<ApplicationView />}
+        />
+        <Route
+          path="/employer/applications"
+          element={<EmpApplications />}
         />
         <Route
           path="/employer/update-status/:istatus/:app_id"

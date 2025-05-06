@@ -63,8 +63,8 @@ const Home = () => {
       });
       toast.success("Successfully applied to job!");
     } catch (error) {
-      console.error("Failed to apply:", error);
-      toast.error("Failed to apply. Please try again.");
+      console.error("Failed to apply:", error.response.data.detail);
+      toast.error(error.response.data.detail);
     }
   };
 

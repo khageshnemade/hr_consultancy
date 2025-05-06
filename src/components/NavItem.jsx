@@ -1,8 +1,9 @@
 import { NavLink } from "react-router-dom";
 
-const NavItem = ({ to, children }) => (
+const NavItem = ({ to, children, onClick }) => (
   <NavLink
     to={to}
+    onClick={onClick} // Add this line
     className={({ isActive }) =>
       `px-3 py-2 rounded-md text-sm font-medium transition-all duration-200
       ${isActive

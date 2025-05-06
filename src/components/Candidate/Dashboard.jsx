@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import makeRequest from "../../axios";
 import { setProfileData } from "../../../redux/features/profileSlice";
+import { Link } from "react-router-dom";
 
 const EmployerDashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
@@ -15,10 +16,9 @@ const EmployerDashboard = () => {
           makeRequest.get("candidate/dashboard/"),
           makeRequest.get("candidate/profiledetails/"),
         ]);
-        console.log(profileRes?.data);
 
         // Set dashboard data
-        setDashboardData(dashboardRes.data);
+        setDashboardData(dashboardRes?.data);
 
         // Dispatch profile data
         const { name, email, work_status, profile_pic } = profileRes.data;
@@ -33,6 +33,7 @@ const EmployerDashboard = () => {
     fetchAllData();
   }, [dispatch]);
 
+
   return (
     <div className="max-w-4xl mx-auto mt-10 p-6 rounded shadow bg-white">
       {loading ? (
@@ -42,22 +43,28 @@ const EmployerDashboard = () => {
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="p-4 bg-green-100 rounded-lg shadow-md">
-            <h3 className="text-xl font-semibold text-green-700">Job Count</h3>
-            <p className="text-2xl text-green-600">{dashboardData.job_count}</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+          <Link to={'/candidate/applied_jobs'}><div className="p-4 bg-green-100 rounded-lg shadow-md">
+            <h3 className="text-xl font-semibold text-green-700">Applied</h3>
+            <p className="text-2xl text-green-600">{dashboardData.appliedcount}</p>
           </div>
-          <div className="p-4 bg-blue-100 rounded-lg shadow-md">
-            <h3 className="text-xl font-semibold text-blue-700">
-              Application Count
-            </h3>
-            <p className="text-2xl text-blue-600">
-              {dashboardData.application_count}
-            </p>
-          </div>
+          </Link>
+          <Link to={'/candidate/applied_jobs/shortlisted'}> <div className="p-4 bg-yellow-100 rounded-lg shadow-md">
+            <h3 className="text-xl font-semibold text-yellow-700">Shortlisted</h3>
+            <p className="text-2xl text-yellow-600">{dashboardData.shortlisted}</p>
+          </div></Link>
+          <Link to={'/candidate/applied_jobs/selected'}> <div className="p-4 bg-blue-100 rounded-lg shadow-md">
+            <h3 className="text-xl font-semibold text-blue-700">Selected</h3>
+            <p className="text-2xl text-blue-600">{dashboardData.selected}</p>
+          </div></Link>
+          <Link to={'/candidate/applied_jobs/rejected'}> <div className="p-4 bg-red-100 rounded-lg shadow-md">
+            <h3 className="text-xl font-semibold text-red-700">Rejected</h3>
+            <p className="text-2xl text-red-600">{dashboardData.rejected}</p>
+          </div></Link>
         </div>
       )}
     </div>
+
   );
 };
 

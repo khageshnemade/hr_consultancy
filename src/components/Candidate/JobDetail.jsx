@@ -41,7 +41,7 @@ const JobDetail = () => {
     }
   }, [jobId]);
 
-  const handleApply = async () => {
+  const handleApply = async (jobId) => {
     const user = JSON.parse(localStorage.getItem("user"));
   
     // Redirect if not logged in
@@ -58,14 +58,14 @@ const JobDetail = () => {
     }
   
     try {
-      await axios.post("candidate/job-apply/", {
+      await makeRequest.post("candidate/job-apply/", {
         status: "Pending",
         job: jobId,
       });
       toast.success("Successfully applied to job!");
     } catch (error) {
-      console.error("Failed to apply:", error);
-      toast.error("Failed to apply. Please try again.");
+      console.error("Failed to apply:", error.response.data.message);
+      toast.error(error.response.data.message);
     }
   };
   
@@ -131,7 +131,7 @@ const JobDetail = () => {
         {(!userRole || userRole === "Candidate") && (
           <div className="text-center mt-8">
             <button
-              onClick={handleApply}
+              onClick={()=>handleApply(job.id)}
               className="bg-green-600 hover:bg-green-700 text-white font-medium px-6 py-2 rounded-md transition duration-200"
             >
               Apply Now

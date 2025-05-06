@@ -1,14 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import makeRequest from "../../axios";
-import {
-  FaLocationArrow,
-  FaRegClock,
-  FaRegMoneyBillAlt,
-  FaRegHandshake,
-  FaMailBulk,
-  FaPhoneAlt,
-} from "react-icons/fa";
+import { FaLocationArrow, FaRegClock, FaRegMoneyBillAlt, FaRegHandshake, FaMailBulk, FaPhoneAlt, FaArrowLeft } from "react-icons/fa";
 
 const JobDetails = () => {
   const { company_name, org_id } = useParams(); // Get the org_id from URL parameters
@@ -37,9 +30,20 @@ const JobDetails = () => {
 
   return (
     <div className="p-4 max-w-5xl mx-auto">
+      {/* Back Button Positioned at the Top */}
+      <div className="mb-4">
+        <button
+          onClick={() => navigate(-1)} // Go back to the previous page
+          className="inline-flex items-center text-blue-600 hover:text-blue-800 text-sm font-semibold"
+        >
+          <FaArrowLeft className="mr-2 text-lg" /> Back to Employers
+        </button>
+      </div>
+
       <h2 className="text-3xl font-bold text-gradient mb-6">
         Jobs for {company_name}
       </h2>
+      
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {jobs.length === 0 ? (
           <p className="text-md text-gray-600">
@@ -87,29 +91,16 @@ const JobDetails = () => {
               </div>
               <div className="mt-2">
                 <Link
-                  to={`/admin/applications/${job.company_name}/${job.job_id}`}
+                  to={`/admin/applications/${job.job_id}`}
                   className="inline-block mt-2 text-blue-600 hover:underline text-sm"
                 >
                   View Applications
                 </Link>
               </div>
-              <div className="mt-3">
-                <button className="bg-gradient-to-r from-blue-600 to-blue-400 text-white px-5 py-2 rounded-lg shadow-sm hover:bg-gradient-to-l hover:from-blue-500 hover:to-blue-300 transition">
-                  Apply Now
-                </button>
-              </div>
+          
             </div>
           ))
         )}
-      </div>
-
-      <div className="mt-6">
-        <button
-          onClick={() => navigate(-1)} // Go back to the previous page
-          className="bg-gray-500 text-white px-5 py-2 rounded-lg hover:bg-gray-600 transition"
-        >
-          Back to Employers
-        </button>
       </div>
     </div>
   );

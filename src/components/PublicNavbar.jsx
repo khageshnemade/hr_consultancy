@@ -9,7 +9,7 @@ const PublicNavbar = () => {
 
   return (
     <nav className="bg-white shadow-sm fixed top-0 left-0 w-full z-50">
-      <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between h-16">
+      <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between h-16 border-b border-gray-200">
         {/* Logo */}
         <div className="flex items-center space-x-2">
           <Link to="/">
@@ -19,18 +19,7 @@ const PublicNavbar = () => {
 
         {/* Desktop Links */}
         <div className="hidden md:flex items-center space-x-4">
-          <NavLink
-            to="/candidate/jobs"
-            className={({ isActive }) =>
-              `px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
-                isActive
-                  ? "text-red-600 border-b-2 border-red-500 bg-red-50"
-                  : "text-gray-700 hover:text-red-600 hover:bg-red-50"
-              }`
-            }
-          >
-            Jobs
-          </NavLink>
+         
 
           <NavLink
             to="/login"
@@ -66,13 +55,7 @@ const PublicNavbar = () => {
       {/* Mobile Dropdown Menu */}
       {mobileMenuOpen && (
         <div className="md:hidden bg-white shadow-md px-6 py-4 flex flex-col items-center justify-center space-y-3 text-center">
-        <NavLink
-            to="/candidate/jobs"
-            onClick={toggleMenu}
-            className="block text-gray-700 hover:text-red-600 transition"
-          >
-            Jobs
-          </NavLink>
+       
           <NavLink
             to="/login"
             onClick={toggleMenu}
