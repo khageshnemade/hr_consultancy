@@ -1,12 +1,10 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import NavItem from "./NavItem";
-import { useSelector } from "react-redux";
 
 const AdminNavbar = ({ onLogout }) => {
   // State to toggle mobile menu
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const profile= useSelector((state) => state.profile.profile);
 
   // Toggle function for mobile menu
   const toggleMobileMenu = () => {
@@ -28,8 +26,8 @@ const AdminNavbar = ({ onLogout }) => {
               />
             </Link>
           </div>
-          <span className="text-sm text-gray-700">Hi, {profile.name}</span>
-          </div>
+          <span className="text-sm text-gray-700">Hi, Admin</span>
+        </div>
 
         {/* Right-aligned Navbar Links */}
         <div className="hidden md:flex items-center space-x-6">
@@ -38,7 +36,7 @@ const AdminNavbar = ({ onLogout }) => {
           <NavItem to="/admin/employers">Employers</NavItem>
 
           {/* Profile Picture (Desktop View) */}
-          {profilePic && (
+          {/* {profilePic && (
             <div className="w-10 h-10 rounded-full overflow-hidden">
               <img
                 src={`https://consultancy.scholarnet.in//${profilePic}`}
@@ -46,7 +44,7 @@ const AdminNavbar = ({ onLogout }) => {
                 className="w-full h-full object-cover"
               />
             </div>
-          )}
+          )} */}
 
           {/* Logout Button */}
           <button
@@ -60,7 +58,7 @@ const AdminNavbar = ({ onLogout }) => {
         {/* Mobile Hamburger Icon */}
         <div className="md:hidden flex items-center ml-auto">
           {/* Profile Picture (Mobile View) */}
-          {profilePic && (
+          {/* {profilePic && (
             <div className="w-10 h-10 rounded-full overflow-hidden mr-4">
               <img
                 src={`https://consultancy.scholarnet.in//${profilePic}`}
@@ -68,7 +66,7 @@ const AdminNavbar = ({ onLogout }) => {
                 className="w-full h-full object-cover"
               />
             </div>
-          )}
+          )} */}
 
           {/* Hamburger Icon */}
           <button
@@ -94,9 +92,7 @@ const AdminNavbar = ({ onLogout }) => {
       </div>
 
       {/* Mobile Dropdown Menu */}
-      <div
-        className={`md:hidden ${isMobileMenuOpen ? "block" : "hidden"}`}
-      >
+      <div className={`md:hidden ${isMobileMenuOpen ? "block" : "hidden"}`}>
         <div className="flex flex-col items-center space-y-4 py-4">
           <NavItem to="/admin/dashboard">Dashboard</NavItem>
           <NavItem to="/admin/users">Users</NavItem>
