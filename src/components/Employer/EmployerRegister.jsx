@@ -153,7 +153,7 @@ const EmployerRegister = () => {
     {/* Left Side Image */}
     <div className="md:w-1/2 hidden md:block h-full">
       <img
-        src="/images/employer_register.png"
+        src="/images/register.jpeg"
         alt="Employer Registration"
         className="w-full h-full object-cover"
       />

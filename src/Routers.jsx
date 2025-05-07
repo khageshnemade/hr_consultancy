@@ -28,6 +28,13 @@ import CandidateDetails from "./components/Admin/CandidateDetails";
 import ApplicationView from "./components/Employer/ApplicationView";
 import UpdateApplicationStatus from "./components/Employer/UpdateApplicationStatus ";
 import EmpApplications from "./components/Employer/EmApplications";
+import Contact from "./pages/Contact";
+import ServicesPage from "./pages/Services";
+import EmployerList from "./pages/EmployerList";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import FAQ from "./pages/FAQ";
+import TermsOfService from "./pages/TermsOfService";
+import Blog from "./pages/Blog";
 
 const Routers = () => {
   return (
@@ -36,6 +43,13 @@ const Routers = () => {
         <Route index element={<Home />} />
         <Route path="login" element={<LoginForm />} />
         <Route path="about" element={<About />} />
+        <Route path="contact" element={<Contact />} />
+        <Route path="services" element={<ServicesPage />} />
+        <Route path="companies" element={<EmployerList />} />
+        <Route path="privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="faq" element={<FAQ />} />
+        <Route path="terms-of-service" element={<TermsOfService />} />
+        <Route path="blog" element={<Blog />} />
 
         {/* ---------------------------------------Admin------------------------------------------------------- */}
         <Route path="admin/dashboard" element={<AdminDashboard />} />

@@ -50,7 +50,7 @@ const LoginForm = () => {
         {/* Left Side Image */}
         <div className="md:w-1/2 hidden md:block">
           <img
-            src="/images/login_pic.png"
+            src="/images/employer_login.jpeg"
             alt="Login Illustration"
             className="w-full h-full object-cover rounded-l-xl"
           />

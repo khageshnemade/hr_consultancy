@@ -1,81 +1,117 @@
 import React, { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { Menu, X } from "lucide-react"; // lucide-react icons for modern UI
+import { Menu, X } from "lucide-react";
+
+// Reusable Nav Item with custom hover/active underline behavior
+const NavItem = ({ to, children, onClick }) => (
+  <NavLink
+    to={to}
+    onClick={onClick}
+    className={({ isActive }) =>
+      `px-3 py-1.5 text-sm font-medium transition duration-200 border-b-2 ${
+        isActive
+          ? "text-red-600 bg-red-50 border-red-600"
+          : "text-gray-700 border-transparent hover:border-red-500 hover:text-red-600"
+      }`
+    }
+  >
+    {children}
+  </NavLink>
+);
+
+const navItems = [
+  { label: "Home", to: "/" },
+  { label: "Services", to: "/services" },
+  { label: "Companies", to: "/companies" },
+  { label: "About Us", to: "/about" },
+  { label: "Contact", to: "/contact" },
+];
 
 const PublicNavbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
   const toggleMenu = () => setMobileMenuOpen((prev) => !prev);
 
   return (
     <nav className="bg-white shadow-sm fixed top-0 left-0 w-full z-50">
-      <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between h-16 border-b border-gray-200">
+      <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between h-14 border-b border-gray-200">
         {/* Logo */}
-        <div className="flex items-center space-x-2">
-          <Link to="/">
-            <img src="/logos/hr_consultancy_logo_compressed.jpg" alt="Logo" className="h-16 w-auto" />
-          </Link>
-        </div>
+        <Link to="/" className="flex items-center">
+          <img
+            src="/logos/hr_consultancy_logo_compressed.jpg"
+            alt="HR Consultancy Logo"
+            className="h-10 w-auto"
+          />
+        </Link>
 
-        {/* Desktop Links */}
+        {/* Desktop Navigation */}
         <div className="hidden md:flex items-center space-x-4">
-         
+          {navItems.map(({ label, to }) => (
+            <NavItem key={to} to={to}>
+              {label}
+            </NavItem>
+          ))}
 
+          {/* Auth Buttons - no underline behavior */}
           <NavLink
             to="/login"
-            className="text-sm text-blue-600 border border-blue-600 px-4 py-2 rounded-full hover:bg-blue-50 transition-all"
+            className="text-blue-600 border border-blue-600 text-xs px-3 py-1.5 rounded-full hover:bg-blue-50 transition"
           >
             Login
           </NavLink>
-
           <NavLink
             to="/candidate"
-            className="text-sm text-white bg-green-500 px-4 py-2 rounded-full hover:bg-green-600 transition-all"
+            className="bg-green-500 text-white text-xs px-3 py-1.5 rounded-full hover:bg-green-600 transition"
           >
             Register
           </NavLink>
-
           <NavLink
             to="/employer"
-            className="text-sm text-white bg-orange-500 px-4 py-2 rounded-full hover:bg-orange-600 transition-all"
+            className="bg-orange-500 text-white text-xs px-3 py-1.5 rounded-full hover:bg-orange-600 transition"
           >
-            Employer Register
+            Company Register
           </NavLink>
         </div>
 
-        {/* Mobile Menu Button */}
+        {/* Mobile Toggle */}
         <button
           className="md:hidden text-gray-700 focus:outline-none"
           onClick={toggleMenu}
+          aria-label="Toggle menu"
         >
-          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
       </div>
 
-      {/* Mobile Dropdown Menu */}
+      {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-white shadow-md px-6 py-4 flex flex-col items-center justify-center space-y-3 text-center">
-       
+        <div className="md:hidden bg-white shadow-md px-4 py-4 flex flex-col space-y-3 text-center text-sm border-t border-gray-200">
+          {navItems.map(({ label, to }) => (
+            <NavItem key={to} to={to} onClick={toggleMenu}>
+              {label}
+            </NavItem>
+          ))}
+
+          {/* Auth Buttons (no underline) */}
           <NavLink
             to="/login"
             onClick={toggleMenu}
-            className="block text-blue-600 border border-blue-600 rounded-full px-4 py-2 text-sm hover:bg-blue-50 transition"
+            className="text-blue-600 border border-blue-600 px-3 py-1.5 rounded-full hover:bg-blue-50 transition"
           >
             Login
           </NavLink>
           <NavLink
             to="/candidate"
             onClick={toggleMenu}
-            className="block bg-green-500 text-white rounded-full px-4 py-2 text-sm hover:bg-green-600 transition"
+            className="bg-green-500 text-white px-3 py-1.5 rounded-full hover:bg-green-600 transition"
           >
             Register
           </NavLink>
           <NavLink
             to="/employer"
             onClick={toggleMenu}
-            className="block bg-orange-500 text-white rounded-full px-4 py-2 text-sm hover:bg-orange-600 transition"
+            className="bg-orange-500 text-white px-3 py-1.5 rounded-full hover:bg-orange-600 transition"
           >
-            Employer Register
+            Company Register
           </NavLink>
         </div>
       )}

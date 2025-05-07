@@ -29,36 +29,74 @@ const EmployerProfile = () => {
   const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState({});
   const [message, setMessage] = useState("");
+  const [districts, setDistricts] = useState([]);
+  const [talukas, setTalukas] = useState([]);
 
+  // Fetch districts from API
+  const fetchDistricts = async () => {
+    try {
+      const response = await makeRequest.get(
+        "https://consultancy.scholarnet.in/api/core/district_list"
+      );
+      setDistricts(response.data);
+    } catch (error) {
+      console.error("Failed to fetch districts:", error.response?.data || error.message);
+      alert("Unable to load district data. Please try again later.");
+    }
+  };
+
+  // Fetch talukas based on the selected district
+  const fetchTalukas = async (districtId) => {
+
+    try {
+      const response = await makeRequest.get(
+        `https://consultancy.scholarnet.in/api/core/taluka_list/${districtId}`
+      );
+      setTalukas(response.data);
+    } catch (error) {
+      console.error("Failed to fetch talukas:", error.response?.data || error.message);
+      alert("Unable to load taluka data. Please try again later.");
+    }
+  };
+  const fetchProfile = async () => {
+    try {
+      const res = await makeRequest.get("employer/profiledetails/");
+      setProfile(res.data);
+      setFormData({
+        name: res.data.name || "",
+        mobile: res.data.mobile || "",
+        email: res.data.email || "",
+        role: res.data.role || "",
+        company_name: res.data.company_name || "",
+        industry_type: res.data.industry_type || "",
+        company_id_type: res.data.company_id_type || "",
+        company_unique_id: res.data.company_unique_id || "",
+        reprsentative_name: res.data.reprsentative_name || "",
+        district: res.data.district || "",
+        taluka: res.data.taluka || "",
+        city: res.data.city || "",
+        organization_logo: null,
+      });
+    } catch (err) {
+      setMessage("❌ Failed to load employer profile");
+    }
+  };
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const res = await makeRequest.get("employer/profiledetails/");
-        setProfile(res.data);
-        setFormData({
-          name: res.data.name || "",
-          mobile: res.data.mobile || "",
-          email: res.data.email || "",
-          role: res.data.role || "",
-          company_name: res.data.company_name || "",
-          industry_type: res.data.industry_type || "",
-          company_id_type: res.data.company_id_type || "",
-          company_unique_id: res.data.company_unique_id || "",
-          reprsentative_name: res.data.reprsentative_name || "",
-          district: res.data.district || "",
-          taluka: res.data.taluka || "",
-          city: res.data.city || "",
-          organization_logo: null,
-        });
-      } catch (err) {
-        setMessage("❌ Failed to load employer profile");
-      }
-    };
+
     fetchProfile();
+    fetchDistricts()
   }, []);
 
-  const handleChange = (e) => {
+  const handleChange = async(e) => {
     const { name, value } = e.target;
+    if (name === "district") {
+      const selectedDistrict = districts.find(
+        (district) => district.district === value
+      );
+      await fetchTalukas(selectedDistrict.id);
+      setFormData((prev) => ({ ...prev, taluka: "" })); // reset taluka on district change
+    }
+    else
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -130,21 +168,38 @@ const EmployerProfile = () => {
               <label className="block text-gray-600 mb-1 font-medium">
                 {label}
               </label>
-              <input
-                name={name}
-                type="text"
-                value={formData[name] || ""}
-                onChange={handleChange}
-                className={`w-full px-4 py-2 rounded-lg bg-white shadow-sm focus:ring-2 ${
-                  name === "role"
-                    ? "cursor-not-allowed bg-gray-100"
-                    : "focus:ring-red-400"
-                } focus:outline-none`}
-                placeholder={`Enter ${label}`}
-                readOnly={name === "role"}
-                disabled={name === "role"}
-                required
-              />
+              {["district", "taluka"].includes(name) ? (
+                <select
+                  name={name}
+                  value={formData[name]}
+                  onChange={handleChange}
+                  className="block w-full px-4 py-2 rounded border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-red-500"
+                  required
+                >
+                  <option value="">{`Select ${label}`}</option>
+                  {(name === "district" ? districts : name === "taluka" ? talukas : talukas).map((item) => (
+                    <option key={item.id} value={item[name]}>
+                      {item[name]}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  name={name}
+                  type="text"
+                  value={formData[name] || ""}
+                  onChange={handleChange}
+                  className={`w-full px-4 py-2 rounded-lg bg-white shadow-sm focus:ring-2 ${name === "role"
+                      ? "cursor-not-allowed bg-gray-100"
+                      : "focus:ring-red-400"
+                    } focus:outline-none`}
+                  placeholder={`Enter ${label}`}
+                  readOnly={name === "role"}
+                  disabled={name === "role"}
+                  required
+                />
+              )}
+
             </div>
           ))}
 
