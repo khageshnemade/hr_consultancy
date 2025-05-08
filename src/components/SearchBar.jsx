@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Search } from "lucide-react";
 
-const SearchBar = ({ onSearch }) => {
-  const [title, setTitle] = useState("");
-  const [locationQuery, setLocationQuery] = useState("");
+const SearchBar = ({ onSearch, defaultTitle = "", defaultLocation = "" }) => {
+  const [title, setTitle] = useState(defaultTitle);
+  const [locationQuery, setLocationQuery] = useState(defaultLocation);
 
   const handleSearchClick = () => {
     onSearch({

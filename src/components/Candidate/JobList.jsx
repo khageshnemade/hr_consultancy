@@ -9,12 +9,15 @@ import {
   FaCalendarAlt,
 } from "react-icons/fa";
 import SearchBar from "../SearchBar";
+import { useLocation } from "react-router-dom";
 
 const JobList = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+
+  
   const fetchJobs = async (filters = {}) => {
     try {
       setLoading(true);
@@ -47,21 +50,39 @@ const JobList = () => {
     }
   };
 
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const defaultTitle = params.get("title") || "";
+  const defaultLocation = params.get("location") || "";
+  
   useEffect(() => {
-    fetchJobs(); // Initial fetch with no filters
-  }, []);
-
+    const params = new URLSearchParams(location.search);
+    const filters = {
+      title: params.get("title") || "",
+      location: params.get("location") || "",
+    };
+  
+    fetchJobs(filters);
+  }, [location.search]);
+  
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6 gap-4">
         <h2 className="text-3xl font-bold text-gray-800">
           🔥 Latest Job Openings
         </h2>
-        <SearchBar onSearch={fetchJobs} />
+        <SearchBar
+  onSearch={fetchJobs}
+  defaultTitle={defaultTitle}
+  defaultLocation={defaultLocation}
+/>
       </div>
 
       {loading && <div className="text-blue-500">Loading jobs...</div>}
       {error && <div className="text-red-500">{error}</div>}
+      {!loading && jobs.length === 0 && (
+  <div className="text-gray-500 mt-8 text-center">No jobs found matching your criteria.</div>
+)}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
       {jobs?.map((job) => (

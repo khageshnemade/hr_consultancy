@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "../../redux/features/authSlice";
+import { toast } from "react-toastify";
 
 
 const LoginForm = () => {
@@ -35,7 +36,7 @@ const LoginForm = () => {
       dispatch(loginSuccess({ token: access, refresh, role }));
 
       // Redirect or show success
-      alert("Login successful!");
+      toast.success("Login successful!");
       if (role === "Employer") navigate("/employer/dashboard");
       else if (role === "Candidate") navigate("/candidate/dashboard");
       else if (role === "Admin") navigate("/admin/dashboard");

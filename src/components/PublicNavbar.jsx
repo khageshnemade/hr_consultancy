@@ -35,13 +35,15 @@ const PublicNavbar = () => {
     <nav className="bg-white shadow-sm fixed top-0 left-0 w-full z-50">
       <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between h-14 border-b border-gray-200">
         {/* Logo */}
-        <Link to="/" className="flex items-center">
-          <img
-            src="/logos/hr_consultancy_logo_compressed.jpg"
-            alt="HR Consultancy Logo"
-            className="h-10 w-auto"
-          />
-        </Link>
+         <div className="flex items-center space-x-3">
+                  <Link to="/">
+                    <img
+                      src="/logos/hr_consultancy_logo_compressed.jpg"
+                      alt="Logo"
+                      className="h-12 w-auto"
+                    />
+                  </Link>
+                </div>
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center space-x-4">
