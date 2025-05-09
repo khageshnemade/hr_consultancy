@@ -40,7 +40,7 @@ const EmpApplications = () => {
   }, []);
 
   return (
-<div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 py-4 px-4">
+<div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 py-4 px-4 pt-20">
   <div className="max-w-6xl mx-auto">
 
     {/* Heading */}

@@ -156,11 +156,11 @@ const CandidateProfile = () => {
     ) : null;
 
   if (!profile) {
-    return <div className="text-center mt-10">Loading profile...</div>;
+    return <div className="text-center mt-10 pt-20">Loading profile...</div>;
   }
 
   return (
-    <div className="max-w-3xl mx-auto mt-10 p-8 bg-gray-50 rounded-xl shadow-sm">
+    <div className="max-w-3xl mx-auto mt-10 p-8 bg-gray-50 rounded-xl shadow-sm pt-20">
       <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
         Candidate Profile
       </h2>

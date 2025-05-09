@@ -30,7 +30,7 @@ const blogPosts = [
 
 const Blog = () => {
   return (
-    <div className="max-w-6xl mx-auto px-6 py-12">
+    <div className="max-w-6xl mx-auto px-6 py-12 pt-20">
       <h1 className="text-3xl font-bold text-center mb-12">HR Blog & Insights</h1>
 
       <div className="grid md:grid-cols-3 gap-8">

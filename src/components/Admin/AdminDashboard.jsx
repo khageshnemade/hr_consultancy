@@ -92,7 +92,7 @@ const AdminDashboard = () => {
     }
 
         return (
-            <div className="p-6 max-w-7xl mx-auto">
+            <div className="p-6 max-w-7xl mx-auto pt-20 mt-10">
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                 {cards.map((card, index) => (
                         <Link

@@ -32,11 +32,11 @@ const EmployerDetail = () => {
     fetchEmployer();
   }, [org_id]);
 
-  if (loading) return <div className="text-center p-6 text-gray-500">Loading...</div>;
-  if (!employer) return <div className="text-center p-6 text-red-500">Employer not found.</div>;
+  if (loading) return <div className="text-center p-6 text-gray-500 pt-20">Loading...</div>;
+  if (!employer) return <div className="text-center p-6 text-red-500 pt-20">Employer not found.</div>;
 
   return (
-    <div className="p-4 max-w-3xl mx-auto bg-white shadow rounded-lg text-sm">
+    <div className="p-4 max-w-3xl mx-auto bg-white shadow rounded-lg text-sm pt-20">
       {/* Header */}
       <div className="flex items-center gap-3 mb-4">
       <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-r from-blue-500 to-teal-400">

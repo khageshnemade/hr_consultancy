@@ -32,15 +32,15 @@ const Employers = () => {
   };
 
   if (loading) {
-    return <div className="text-center p-10 text-gray-500">Loading employers...</div>;
+    return <div className="text-center p-10 text-gray-500 pt-20">Loading employers...</div>;
   }
 
   if (error) {
-    return <div className="text-center p-10 text-red-500">{error}</div>;
+    return <div className="text-center p-10 text-red-500 pt-20">{error}</div>;
   }
 
   return (
-    <div className="p-4 max-w-6xl mx-auto">
+    <div className="p-4 max-w-6xl mx-auto pt-20">
       <h2 className="text-3xl font-bold text-gradient mb-6">All Employers</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {employers.map((employer) => (

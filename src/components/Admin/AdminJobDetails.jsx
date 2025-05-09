@@ -25,11 +25,11 @@ const JobDetails = () => {
   }, [org_id]);
 
   if (loading) {
-    return <div className="text-center p-6 text-gray-500">Loading jobs...</div>;
+    return <div className="text-center p-6 text-gray-500 pt-20">Loading jobs...</div>;
   }
 
   return (
-    <div className="p-4 max-w-5xl mx-auto">
+    <div className="p-4 max-w-5xl mx-auto pt-20">
       {/* Back Button Positioned at the Top */}
       <div className="mb-4">
         <button

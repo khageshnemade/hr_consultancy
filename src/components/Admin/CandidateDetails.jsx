@@ -37,15 +37,15 @@ const CandidateDetails = () => {
 
   if (loading)
     return (
-      <div className="text-center py-10 text-blue-600 text-lg">Loading...</div>
+      <div className="text-center py-10 text-blue-600 text-lg pt-20">Loading...</div>
     );
   if (error)
     return (
-      <div className="text-center py-10 text-red-600 text-lg">{error}</div>
+      <div className="text-center py-10 text-red-600 text-lg pt-20">{error}</div>
     );
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <div className="p-6 max-w-4xl mx-auto pt-20">
       {/* Back Button */}
       <div className="mb-6">
         <Link

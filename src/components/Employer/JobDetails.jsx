@@ -36,7 +36,7 @@ const JobDetails = () => {
 
   if (loading)
     return (
-      <div className="text-center text-red-600 mt-10">
+      <div className="text-center text-red-600 mt-10 pt-20">
         Loading job details...
       </div>
     );
@@ -44,7 +44,7 @@ const JobDetails = () => {
     return <div className="text-center text-red-500 mt-10">{error}</div>;
 
   return (
-    <div className="min-h-screen bg-gray-50 py-10 px-4">
+    <div className="min-h-screen bg-gray-50 py-10 px-4 pt-20">
       <div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-3xl font-bold text-red-600">{job.title}</h2>

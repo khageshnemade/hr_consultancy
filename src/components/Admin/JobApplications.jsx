@@ -34,14 +34,14 @@ const JobApplications = () => {
 
   if (loading) {
     return (
-      <div className="text-center p-6 text-gray-500">
+      <div className="text-center p-6 text-gray-500 pt-20">
         Loading applications...
       </div>
     );
   }
 
   return (
-    <div className="p-6 max-w-6xl mx-auto mt-4">
+    <div className="p-6 max-w-6xl mx-auto mt-4 pt-20">
       {/* Back Button */}
       <Link
         onClick={() => navigate(-1)}

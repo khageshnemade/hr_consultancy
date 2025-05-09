@@ -73,20 +73,20 @@ const JobDetail = () => {
 
   if (loading)
     return (
-      <div className="text-blue-600 text-center mt-10 text-lg">
+      <div className="text-blue-600 text-center mt-10 text-lg pt-20">
         Loading job details...
       </div>
-    );
+    );  
 
   if (error)
     return (
-      <div className="text-red-500 text-center mt-10 text-lg">
+      <div className="text-red-500 text-center mt-10 text-lg pt-20">
         {error}
       </div>
     );
 
   return (
-    <div className="flex justify-center px-4 py-10 bg-gray-50 min-h-screen">
+    <div className="flex justify-center px-4 py-10 bg-gray-50 min-h-screen pt-20">
       <div className="w-full max-w-3xl bg-white rounded-2xl shadow-lg p-8">
         <Link
           onClick={() => navigate(-1)}

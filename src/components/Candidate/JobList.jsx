@@ -66,7 +66,7 @@ const JobList = () => {
   }, [location.search]);
   
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8">
+    <div className="max-w-5xl mx-auto px-4 py-8 pt-20">
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6 gap-4">
         <h2 className="text-3xl font-bold text-gray-800">
           🔥 Latest Job Openings

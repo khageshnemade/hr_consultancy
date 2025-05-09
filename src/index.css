@@ -5,3 +5,10 @@ body {
   font-family: Arial, sans-serif;
   color: #333;
 }
+
+.swiper-button-next,
+.swiper-button-prev {
+  color: white; /* or contrast color */
+  top: 50%;
+  transform: translateY(-50%);
+}

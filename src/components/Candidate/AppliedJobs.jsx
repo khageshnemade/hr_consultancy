@@ -32,14 +32,14 @@ const AppliedJobs = () => {
 
   if (loading) {
     return (
-      <div className="text-center mt-10 text-blue-600 text-lg">
+      <div className="text-center mt-10 text-blue-600 text-lg pt-20">
         Loading applied jobs...
       </div>
     );
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-10">
+    <div className="max-w-6xl mx-auto px-4 py-10 pt-20">
       <h2 className="text-3xl font-bold text-gray-800 mb-8">
         📄 My Applied Jobs
       </h2>

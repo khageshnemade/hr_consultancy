@@ -46,7 +46,7 @@ const JobPostForm = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6">
+    <div className="min-h-screen flex items-center justify-center p-6 pt-20">
   <div className="bg-white shadow-2xl rounded-2xl overflow-hidden flex flex-col md:flex-row w-full max-w-6xl h-full md:h-[90vh]">
     {/* Left Side Image */}
     <div className="md:w-1/2 h-64 md:h-full hidden md:block">

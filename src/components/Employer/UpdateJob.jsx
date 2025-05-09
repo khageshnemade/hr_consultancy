@@ -45,7 +45,7 @@ const UpdateJob = () => {
   if (!formData) return <div>Loading...</div>;
 
   return (
-    <div className="max-w-2xl mx-auto mt-10 p-6 bg-white rounded shadow">
+    <div className="max-w-2xl mx-auto mt-10 p-6 bg-white rounded shadow pt-20">
       <h2 className="text-2xl font-bold mb-4 text-red-600">Update Job</h2>
 
         {/* Back Button */}

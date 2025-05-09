@@ -147,7 +147,7 @@ const EmployerRegister = () => {
 
 
   return (
-<div className="min-h-screen flex items-center justify-center bg-gray-100 p-6">
+<div className="min-h-screen flex items-center justify-center bg-gray-100 p-6 pt-20">
   <div className="bg-white shadow-2xl rounded-xl overflow-hidden flex flex-col md:flex-row w-full max-w-6xl h-full md:h-[90vh]">
     
     {/* Left Side Image */}

@@ -31,7 +31,7 @@ const EmployerList = () => {
   }, []);
 
   return (
-    <section className="mt-16 px-4">
+    <section className="mt-16 px-4 pt-16">
       <h2 className="text-3xl font-extrabold text-gray-800 mb-10 text-center">
         🏢 Top Companies Hiring Now
       </h2>

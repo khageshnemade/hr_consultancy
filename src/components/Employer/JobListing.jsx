@@ -41,7 +41,7 @@ const JobListings = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-100 py-10 px-4">
+    <div className="min-h-screen bg-gray-100 py-10 px-4 pt-20">
       <div className="max-w-6xl mx-auto bg-white p-8 rounded-lg shadow">
         {/* Heading and Add Button */}
         <div className="flex justify-between items-center mb-6">

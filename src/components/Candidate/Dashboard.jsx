@@ -35,7 +35,7 @@ const EmployerDashboard = () => {
 
 
   return (
-    <div className="max-w-4xl mx-auto mt-10 p-6 rounded shadow bg-white">
+    <div className="max-w-4xl mx-auto p-6 rounded shadow bg-white  mt-32">
       {loading ? (
         <div className="flex justify-center items-center">
           <div className="spinner-border text-blue-600" role="status">

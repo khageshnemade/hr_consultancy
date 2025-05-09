@@ -33,14 +33,14 @@ const Candidates = () => {
 
   if (loading) {
     return (
-      <div className="text-center py-10 text-blue-500 text-lg">
+      <div className="text-center py-10 text-blue-500 text-lg pt-20">
         Loading candidates...
       </div>
     );
   }
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+    <div className="p-6 max-w-7xl mx-auto pt-20">
       <h2 className="text-3xl font-bold text-slate-800 mb-6">
         👥 All Candidates
       </h2>
