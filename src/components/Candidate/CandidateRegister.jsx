@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import makeRequest from "../../axios";
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 
 const CandidateRegister = () => {
+  const [showPassword, setShowPassword] = useState(false);
+  const [formErrors, setFormErrors] = useState({});
   const [formData, setFormData] = useState({
     name: "",
     mobile: "",
@@ -17,6 +20,7 @@ const CandidateRegister = () => {
       city: "", // City input field for free text
     },
   });
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/;
 
   const [districts, setDistricts] = useState([]);
   const [talukas, setTalukas] = useState([]);
@@ -82,17 +86,50 @@ const CandidateRegister = () => {
     }
   };
 
+  const validateForm = () => {
+    const errors = {};
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/;
+    const mobileRegex = /^[0-9]{10}$/;
+
+    if (!formData.name) errors.name = "Full name is required.";
+    if (!formData.mobile) errors.mobile = "Mobile number is required.";
+    else if (!mobileRegex.test(formData.mobile)) errors.mobile = "Enter a valid 10-digit mobile number.";
+
+    if (!formData.email) errors.email = "Email is required.";
+    else if (!emailRegex.test(formData.email)) errors.email = "Enter a valid email address.";
+
+    if (!formData.password) errors.password = "Password is required.";
+    else if (!passwordRegex.test(formData.password)) {
+      errors.password = "Password must be 8+ characters, include 1 uppercase, 1 lowercase & 1 special character.";
+    }
+
+    if (!formData.candidate.work_status) errors.work_status = "Work status is required.";
+    if (!formData.candidate.dob) errors.dob = "Date of birth is required.";
+    if (!formData.candidate.gender) errors.gender = "Gender is required.";
+    if (!formData.candidate.district) errors.district = "District is required.";
+    if (!formData.candidate.taluka) errors.taluka = "Taluka is required.";
+    if (!formData.candidate.city) errors.city = "City is required.";
+
+    return errors;
+  };
+
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const errors = validateForm();
+
+    if (Object.keys(errors).length > 0) {
+      errors.all = "* fields are mandatory"
+      setFormErrors(errors);
+      return;
+    }
+
     try {
-      const response = await makeRequest.post(
-        "candidate/registration/",
-        formData
-      );
+      await makeRequest.post("candidate/registration/", formData);
       alert("Candidate registered successfully!");
 
-      // Reset form
+      // Reset form and errors
       setFormData({
         name: "",
         mobile: "",
@@ -105,17 +142,17 @@ const CandidateRegister = () => {
           gender: "",
           district: "",
           taluka: "",
-          city: "", // Reset city after form submission
+          city: "",
         },
       });
+      setFormErrors({});
     } catch (error) {
-      console.error(
-        "Registration failed:",
-        error.response?.data || error.message
-      );
+      console.error("Registration failed:", error.response?.data || error.message);
       alert("Registration failed. Please check your input.");
     }
   };
+
+
 
   return (
     <div className="min-h-screen flex items-center justify-center p-6 pt-20">
@@ -123,8 +160,8 @@ const CandidateRegister = () => {
         {/* Left Side Image */}
         <div className="md:w-1/2 hidden md:block h-full">
           <img
-        src="/images/employe_login.jpg"
-        alt="Job search"
+            src="/images/employe_login.jpg"
+            alt="Job search"
             className="w-full h-full object-cover"
           />
         </div>
@@ -135,16 +172,19 @@ const CandidateRegister = () => {
             Candidate Registration
           </h2>
 
+
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Basic Info */}
             {[
               { label: "Full Name", name: "name", type: "text", value: formData.name },
               { label: "Mobile Number", name: "mobile", type: "text", value: formData.mobile },
               { label: "Email Address", name: "email", type: "email", value: formData.email },
-              { label: "Password", name: "password", type: "password", value: formData.password },
             ].map(({ label, name, type, value }) => (
               <div key={name}>
-                <label className="block mb-1 text-sm font-medium text-gray-700">{label}</label>
+                <label className="block mb-1 text-sm font-medium text-gray-700">{label}
+                  <span className="text-red-500">*</span>
+
+                </label>
                 <input
                   type={type}
                   name={name}
@@ -155,10 +195,34 @@ const CandidateRegister = () => {
                 />
               </div>
             ))}
+            {/* Password Field with Eye Toggle */}
+            <div className="relative">
+              <label className="block mb-1 text-sm font-medium text-gray-700">Password<span className="text-red-500">*</span>
+              </label>
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                className="w-full px-4 py-2 pr-10 rounded border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-red-500"
+                required
+              />
+              <div
+                className="absolute inset-y-0 right-3 flex items-center top-6 cursor-pointer"
+                onClick={() => setShowPassword((prev) => !prev)}
+              >
+                {showPassword ? (
+                  <AiFillEyeInvisible className="text-gray-600 w-5 h-5" />
+                ) : (
+                  <AiFillEye className="text-gray-600 w-5 h-5" />
+                )}
+              </div>
+            </div>
 
             {/* Work Status */}
             <div>
-              <label className="block mb-1 text-sm font-medium text-gray-700">Work Status</label>
+              <label className="block mb-1 text-sm font-medium text-gray-700">Work Status<span className="text-red-500">*</span>
+              </label>
               <select
                 name="work_status"
                 value={formData.candidate.work_status}
@@ -174,7 +238,8 @@ const CandidateRegister = () => {
 
             {/* Date of Birth */}
             <div>
-              <label className="block mb-1 text-sm font-medium text-gray-700">Date of Birth</label>
+              <label className="block mb-1 text-sm font-medium text-gray-700">Date of Birth<span className="text-red-500">*</span>
+              </label>
               <input
                 type="date"
                 name="dob"
@@ -187,7 +252,8 @@ const CandidateRegister = () => {
 
             {/* Gender */}
             <div>
-              <label className="block mb-1 text-sm font-medium text-gray-700">Gender</label>
+              <label className="block mb-1 text-sm font-medium text-gray-700">Gender<span className="text-red-500">*</span>
+              </label>
               <select
                 name="gender"
                 value={formData.candidate.gender}
@@ -204,7 +270,8 @@ const CandidateRegister = () => {
 
             {/* District Dropdown */}
             <div>
-              <label className="block mb-1 text-sm font-medium text-gray-700">District</label>
+              <label className="block mb-1 text-sm font-medium text-gray-700">District<span className="text-red-500">*</span>
+              </label>
               <select
                 name="district"
                 value={formData.candidate.district}
@@ -223,7 +290,8 @@ const CandidateRegister = () => {
 
             {/* Taluka (City) Dropdown */}
             <div>
-              <label className="block mb-1 text-sm font-medium text-gray-700">Taluka (City)</label>
+              <label className="block mb-1 text-sm font-medium text-gray-700">Taluka (City)<span className="text-red-500">*</span>
+              </label>
               <select
                 name="taluka"
                 value={formData.candidate.taluka} // Updated to taluka
@@ -242,7 +310,8 @@ const CandidateRegister = () => {
 
             {/* City Input Field */}
             <div>
-              <label className="block mb-1 text-sm font-medium text-gray-700">City</label>
+              <label className="block mb-1 text-sm font-medium text-gray-700">City<span className="text-red-500">*</span>
+              </label>
               <input
                 type="text"
                 name="city"
@@ -252,11 +321,20 @@ const CandidateRegister = () => {
                 required
               />
             </div>
-
+            {Object.keys(formErrors).length > 0 && (
+              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                <ul className="list-disc pl-5 text-sm">
+                  {Object.values(formErrors).map((error, index) => (
+                    <li key={index}>{error}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
             <button
               type="submit"
-              className="w-full bg-red-600 text-white py-3 mt-4 rounded-lg hover:bg-red-700 transition font-semibold"
+              className="w-full bg-blue-600 text-white py-3 mt-4 rounded-lg hover:bg-blue-700 transition font-semibold"
             >
+
               Register
             </button>
           </form>

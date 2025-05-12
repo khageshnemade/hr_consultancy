@@ -9,6 +9,7 @@ import {
   FaBirthdayCake,
   FaUserTie,
   FaBriefcase,
+  FaPen
 } from "react-icons/fa";
 
 const CandidateProfile = () => {
@@ -36,15 +37,36 @@ const CandidateProfile = () => {
   const [talukas, setTalukas] = useState([]);
 
   useEffect(() => {
-    fetchProfile();
-    fetchDistricts();
-  }, []);
+    const init = async () => {
+      // Fetch the districts only once
+      await fetchDistricts();
+      await fetchProfile();
+    };
+  
+    init();
+  }, []); // Empty dependency array ensures this runs only once, after the initial render
+  useEffect(() => {
+    const loadTalukas = async () => {
+      const district = formData.district;
+      if (district) {
+        // Find the selected district object
+        const selectedDistrict = districts.find(d => d.district === district);
+        if (selectedDistrict?.id) {
+          await fetchTalukas(selectedDistrict.id); // Fetch talukas for the selected district
+        }
+      }
+    };
+  
+    loadTalukas();
+  }, [formData.district, districts]); // This only triggers when district changes
+    
+
   const fetchProfile = async () => {
     try {
       const res = await makeRequest.get("candidate/profiledetails/");
       setProfile(res.data);
-
-      setFormData({
+  
+      const updatedForm = {
         name: res.data.name || "",
         mobile: res.data.mobile || "",
         email: res.data.email || "",
@@ -52,20 +74,31 @@ const CandidateProfile = () => {
         work_status: res.data.work_status || "",
         gender: res.data.gender || "",
         dob: res.data.dob || "",
-        district: res.data.district || "", // use district id
+        district: res.data.district || "",
         taluka: res.data.taluka || "",
         city: res.data.city || "",
         resume: null,
         profile_pic: null,
         cover_letter: null,
-      });
+      };
+  
+      setFormData(updatedForm);
+  
+      // Find the district ID to fetch talukas
+      const district = updatedForm.district;
+      if (district) {
+        const selectedDistrict = districts.find(d => d.district === district);
+        if (selectedDistrict?.id) {
+          await fetchTalukas(selectedDistrict.id);
+        }
+      }
     } catch (error) {
       console.error("Error fetching profile:", error);
       setMessage("Failed to load profile");
     }
   };
+  
 
-  // Fetch districts from API
   const fetchDistricts = async () => {
     try {
       const response = await makeRequest.get(
@@ -78,9 +111,7 @@ const CandidateProfile = () => {
     }
   };
 
-  // Fetch talukas based on the selected district
   const fetchTalukas = async (districtId) => {
-    
     try {
       const response = await makeRequest.get(
         `https://consultancy.scholarnet.in/api/core/taluka_list/${districtId}`
@@ -91,6 +122,7 @@ const CandidateProfile = () => {
       alert("Unable to load taluka data. Please try again later.");
     }
   };
+
   const handleChange = async (e) => {
     const { name, value, files, type } = e.target;
 
@@ -99,17 +131,17 @@ const CandidateProfile = () => {
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
 
-      // Auto-fetch talukas if district changes
       if (name === "district") {
         const selectedDistrict = districts.find(
           (district) => district.district === value
         );
-        await fetchTalukas(selectedDistrict.id);
-        setFormData((prev) => ({ ...prev, taluka: "" })); // reset taluka on district change
+        if (selectedDistrict?.id) {
+          await fetchTalukas(selectedDistrict.id);
+          setFormData((prev) => ({ ...prev, taluka: "" }));
+        }
       }
     }
   };
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -130,8 +162,6 @@ const CandidateProfile = () => {
 
       setMessage("✅ Profile updated successfully!");
       setEditMode(false);
-
-      // Fetch the updated profile data
       const response = await makeRequest.get("candidate/profiledetails/");
       setProfile(response.data);
     } catch (error) {
@@ -160,7 +190,39 @@ const CandidateProfile = () => {
   }
 
   return (
-    <div className="max-w-3xl mx-auto mt-10 p-8 bg-gray-50 rounded-xl shadow-sm pt-20">
+    <div className="max-w-3xl mx-auto mt-30 p-8 bg-gray-50 rounded-xl shadow-sm pt-20">
+      <div className="flex justify-center -mt-16 mb-6 relative">
+        <div className="relative w-32 h-32 rounded-full overflow-hidden shadow-lg border-4 border-white bg-gray-200">
+          <img
+            src={
+              profile.profile_pic
+                ? `https://consultancy.scholarnet.in/${profile.profile_pic}`
+                : "/default-profile.png"
+            }
+            alt="Profile"
+            className="object-cover w-full h-full"
+          />
+          {editMode && (
+            <>
+              <label
+                htmlFor="profilePicInput"
+                className="absolute inset-0 bg-black bg-opacity-40 opacity-0 hover:opacity-100 flex items-center justify-center transition cursor-pointer"
+              >
+                <FaPen className="text-white text-xl" />
+              </label>
+              <input
+                id="profilePicInput"
+                name="profile_pic"
+                type="file"
+                accept=".png,.jpg,.jpeg"
+                onChange={handleChange}
+                className="hidden"
+              />
+            </>
+          )}
+        </div>
+      </div>
+
       <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
         Candidate Profile
       </h2>
@@ -201,7 +263,6 @@ const CandidateProfile = () => {
             </div>
           ))}
 
-          {/* District Dropdown */}
           <div className="col-span-2 sm:col-span-1">
             <label className="block mb-1 text-sm font-medium text-gray-700">
               District
@@ -222,7 +283,6 @@ const CandidateProfile = () => {
             </select>
           </div>
 
-          {/* Taluka Dropdown */}
           <div className="col-span-2 sm:col-span-1">
             <label className="block mb-1 text-sm font-medium text-gray-700">
               Taluka (City)
@@ -243,28 +303,22 @@ const CandidateProfile = () => {
             </select>
           </div>
 
-          {/* File Uploads */}
           {[
-            { name: "resume", label: "Resume", type: "document" },
-            { name: "profile_pic", label: "Profile Picture", type: "image" },
-            { name: "cover_letter", label: "Cover Letter", type: "document" },
-          ].map(({ name, label, type }) => (
+            { name: "resume", label: "Resume" },
+            { name: "cover_letter", label: "Cover Letter" },
+          ].map(({ name, label }) => (
             <div key={name} className="col-span-2 sm:col-span-1">
               <label className="block text-gray-600 mb-1 font-medium">{label}</label>
               <input
                 name={name}
                 type="file"
-                accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
+                accept=".pdf,.doc,.docx"
                 onChange={handleChange}
                 className="block w-full px-4 py-2 rounded-lg bg-white shadow-sm focus:ring-2 focus:ring-red-400 focus:outline-none"
               />
-              <div className="mt-1">
-                <FileButton label={label} url={profile[name]} type={type} />
-              </div>
             </div>
           ))}
 
-          {/* Buttons */}
           <div className="col-span-2 flex flex-col sm:flex-row justify-end gap-4 mt-4">
             <button
               type="submit"
@@ -284,62 +338,24 @@ const CandidateProfile = () => {
       ) : (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 text-sm text-gray-800">
-            <ProfileItem
-              icon={<FaUser />}
-              label="Full Name"
-              value={profile.name}
-            />
-            <ProfileItem
-              icon={<FaPhoneAlt />}
-              label="Mobile"
-              value={profile.mobile}
-            />
-            <ProfileItem
-              icon={<FaEnvelope />}
-              label="Email"
-              value={profile.email}
-            />
-            <ProfileItem
-              icon={<FaUserTie />}
-              label="Role"
-              value={profile.role}
-            />
-            <ProfileItem
-              icon={<FaBriefcase />}
-              label="Work Status"
-              value={profile.work_status}
-            />
-            <ProfileItem
-              icon={<FaTransgender />}
-              label="Gender"
-              value={profile.gender}
-            />
-            <ProfileItem
-              icon={<FaBirthdayCake />}
-              label="Date of Birth"
-              value={profile.dob}
-            />
+            <ProfileItem icon={<FaUser />} label="Full Name" value={profile.name} />
+            <ProfileItem icon={<FaPhoneAlt />} label="Mobile" value={profile.mobile} />
+            <ProfileItem icon={<FaEnvelope />} label="Email" value={profile.email} />
+            <ProfileItem icon={<FaUserTie />} label="Role" value={profile.role} />
+            <ProfileItem icon={<FaBriefcase />} label="Work Status" value={profile.work_status} />
+            <ProfileItem icon={<FaTransgender />} label="Gender" value={profile.gender} />
+            <ProfileItem icon={<FaBirthdayCake />} label="Date of Birth" value={profile.dob} />
             <ProfileItem
               icon={<FaCity />}
               label="Location"
               value={`${profile.district || ""}, ${profile.taluka || ""}, ${profile.city || ""}`}
             />
-
-        
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6 text-sm">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6 text-sm">
             <FileButton label="Resume" url={profile.resume} type="document" />
-            <FileButton
-              label="Cover Letter"
-              url={profile.cover_letter}
-              type="document"
-            />
-            <FileButton
-              label="Profile Picture"
-              url={profile.profile_pic}
-              type="image"
-            />
+            <FileButton label="Cover Letter" url={profile.cover_letter} type="document" />
+            {/* Profile picture view removed here */}
           </div>
 
           <div className="flex justify-end mt-6">
@@ -353,7 +369,6 @@ const CandidateProfile = () => {
         </>
       )}
 
-      {/* Modal for file viewing */}
       {modalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-md max-w-5xl w-full relative">

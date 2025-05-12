@@ -5,10 +5,13 @@ import { FaEye, FaTrash, FaPen, FaPaperPlane, FaPlus } from "react-icons/fa";
 import { Tooltip } from "react-tooltip";
 import "react-tooltip/dist/react-tooltip.css";
 import { HiOutlinePlusCircle } from "react-icons/hi";
+
 const JobListings = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [showModal, setShowModal] = useState(false); // Modal visibility state
+  const [jobToDelete, setJobToDelete] = useState(null); // Job ID to delete
 
   const fetchJobs = async () => {
     try {
@@ -22,18 +25,24 @@ const JobListings = () => {
   };
 
   const handleDelete = async (jobId) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this job posting?"
-    );
-    if (!confirmDelete) return;
+    setJobToDelete(jobId); // Set the jobId for deletion
+    setShowModal(true); // Show the modal for confirmation
+  };
 
+  const confirmDelete = async () => {
     try {
-      await makeRequest.delete(`employer/jobdetails/${jobId}/`);
-      fetchJobs();
+      await makeRequest.delete(`employer/jobdetails/${jobToDelete}/`);
+      fetchJobs(); // Refresh job list after delete
+      setShowModal(false); // Close the modal
       alert("Job deleted successfully");
     } catch (error) {
       alert("Failed to delete the job.");
+      setShowModal(false); // Close the modal if error occurs
     }
+  };
+
+  const cancelDelete = () => {
+    setShowModal(false); // Close the modal if the user cancels
   };
 
   useEffect(() => {
@@ -131,6 +140,36 @@ const JobListings = () => {
           </div>
         )}
       </div>
+
+      {/* Modal for Delete Confirmation */}
+      {showModal && (
+  <div className="fixed inset-0 z-40">
+    {/* Modal Background */}
+    <div className="bg-black opacity-50 absolute inset-0" />
+
+    {/* Modal Content */}
+    <div className="flex justify-center items-center absolute inset-0 z-50">
+      <div className="bg-white rounded-lg shadow-lg p-6 w-1/3 text-center">
+        <h2 className="text-lg font-semibold mb-4">Are you sure you want to Delete this job?</h2>
+        <div className="flex justify-between">
+          <button
+            onClick={confirmDelete}
+            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+          >
+            Yes
+          </button>
+          <button
+            onClick={cancelDelete}
+            className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+          >
+            No
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 };

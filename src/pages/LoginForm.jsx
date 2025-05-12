@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "../../redux/features/authSlice";
 import { toast } from "react-toastify";
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
+
 
 
 const LoginForm = () => {
@@ -11,6 +13,7 @@ const LoginForm = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -85,21 +88,33 @@ const LoginForm = () => {
             </div>
 
             {/* Password Input */}
-            <div>
-              <label htmlFor="password" className="block text-gray-700 mb-1">
-                Password
-              </label>
-              <input
-                type="password"
-                name="password"
-                id="password"
-                placeholder="Enter your password"
-                value={formData.password}
-                onChange={handleChange}
-                className="w-full px-4 py-2 bg-gray-100 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-600"
-                required
-              />
-            </div>
+            <div className="relative">
+  <label htmlFor="password" className="block text-gray-700 mb-1">
+    Password
+  </label>
+  <input
+    type={showPassword ? "text" : "password"}
+    name="password"
+    id="password"
+    placeholder="Enter your password"
+    value={formData.password}
+    onChange={handleChange}
+    className="w-full px-4 py-2 bg-gray-100 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-600 pr-10"
+    required
+  />
+  <div
+    className="absolute inset-y-0 right-3 top-6 flex items-center cursor-pointer"
+    onClick={() => setShowPassword((prev) => !prev)}
+  >
+    {showPassword ? (
+      <AiFillEyeInvisible className="text-gray-600 w-5 h-5" />
+    ) : (
+      <AiFillEye className="text-gray-600 w-5 h-5" />
+    )}
+  </div>
+</div>
+
+
 
             {/* Submit Button */}
             <div>

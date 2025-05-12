@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import makeRequest from "../../axios";
-
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 const EmployerRegister = () => {
+  const [showPassword, setShowPassword] = useState(false);
+    const [formErrors, setFormErrors] = useState({});
   const [formData, setFormData] = useState({
     name: "",
     mobile: "",
@@ -20,7 +22,8 @@ const EmployerRegister = () => {
       organization_logo: null,
     },
   });
-  
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/;
+
     const [districts, setDistricts] = useState([]);
     const [talukas, setTalukas] = useState([]);
   
@@ -69,8 +72,8 @@ const EmployerRegister = () => {
     }else  if (name === "district") {
       setFormData((prev) => ({
         ...prev,
-        candidate: {
-          ...prev.candidate,
+        employer: {
+          ...prev.employer,
           [name]: value,
           taluka: "", // Reset taluka when district changes
         },
@@ -93,10 +96,44 @@ const EmployerRegister = () => {
     }
   };
 
-
+  const validateForm = () => {
+    const errors = {};
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/;
+    const mobileRegex = /^[0-9]{10}$/;
+  
+    if (!formData.name) errors.name = "Full name is required.";
+    if (!formData.mobile) errors.mobile = "Mobile number is required.";
+    else if (!mobileRegex.test(formData.mobile)) errors.mobile = "Enter a valid 10-digit mobile number.";
+  
+    if (!formData.email) errors.email = "Email is required.";
+    else if (!emailRegex.test(formData.email)) errors.email = "Enter a valid email address.";
+  
+    if (!formData.password) errors.password = "Password is required.";
+    else if (!passwordRegex.test(formData.password)) {
+      errors.password = "Password must be 8+ characters, include 1 uppercase, 1 lowercase & 1 special character.";
+    }
+   
+    if (!formData.employer.company_name) errors.company_name = "Comapany Name is required.";
+    if (!formData.employer.industry_type) errors.industry_type = "industry type is required.";
+    if (!formData.employer.company_id_type) errors.company_id_type = "company_id_type is required.";
+    if (!formData.employer.company_unique_id) errors.company_unique_id = "company_unique_id is required.";
+    if (!formData.employer.reprsentative_name) errors.reprsentative_name = "reprsentative_name is required.";
+    if (!formData.employer.district) errors.district = "district is required.";
+    if (!formData.employer.taluka) errors.taluka = "taluka is required.";
+    if (!formData.employer.city) errors.city = "City is required.";
+    if (!formData.employer.organization_logo) errors.organization_logo = "organization_logo is required.";
+  
+    return errors;
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    const errors = validateForm();
+    if (Object.keys(errors).length > 0) {
+       errors.all="* fields are mandatory"
+      setFormErrors(errors);
+      return;
+    }
     const data = new FormData();
     data.append("name", formData.name);
     data.append("mobile", formData.mobile);
@@ -171,10 +208,9 @@ const EmployerRegister = () => {
           { label: "Full Name", name: "name", type: "text", value: formData.name },
           { label: "Mobile Number", name: "mobile", type: "text", value: formData.mobile },
           { label: "Email Address", name: "email", type: "email", value: formData.email },
-          { label: "Password", name: "password", type: "password", value: formData.password },
         ].map(({ label, name, type, value }) => (
           <div key={name}>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{label}<span className="text-red-500">*</span></label>
             <input
               type={type}
               name={name}
@@ -184,33 +220,75 @@ const EmployerRegister = () => {
               required
             />
           </div>
+          
         ))}
 
         {/* Employer Details */}
         {[
-          { label: "Company Name", name: "company_name" },
-          { label: "Industry Type", name: "industry_type" },
-          { label: "Company ID Type (e.g., GST, PAN)", name: "company_id_type" },
-          { label: "Company Unique ID", name: "company_unique_id" },
-          { label: "Representative Name", name: "reprsentative_name" }
-        ].map(({ label, name }) => (
-          <div key={name}>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
-            <input
-              type="text"
-              name={name}
-              value={formData.employer[name]}
-              onChange={handleChange}
-              className="w-full px-4 py-2 rounded border border-gray-300 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500"
-              required={name === "company_name"} // Only company_name is required
-            />
-          </div>
-        ))}
+  { label: "Company Name", name: "company_name" },
+  { label: "Industry Type", name: "industry_type" },
+  { label: "Company ID Type (e.g., GST, PAN)", name: "company_id_type" },
+  { label: "Company Unique ID", name: "company_unique_id" },
+  { label: "Representative Name", name: "reprsentative_name" }
+].map(({ label, name }) => (
+  <div key={name} className="mb-4">
+    <label className="block text-sm font-medium text-gray-700 mb-1">
+      {label}
+      <span className="text-red-500">*</span>
+    </label>
 
+    {name === "company_id_type" ? (
+      <select
+        name={name}
+        value={formData.employer[name]}
+        onChange={handleChange}
+        className="w-full px-4 py-2 rounded border border-gray-300 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+        required
+      >
+        <option value="">Select ID Type</option>
+        <option value="GST">GST</option>
+        <option value="PAN">PAN</option>
+        <option value="AADHAR">AADHAR</option>
+      </select>
+    ) : (
+      <input
+        type="text"
+        name={name}
+        value={formData.employer[name]}
+        onChange={handleChange}
+        className="w-full px-4 py-2 rounded border border-gray-300 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+        required={name === "company_name"}
+      />
+    )}
+  </div>
+))}
+
+ {/* Password Field with Eye Toggle */}
+            <div className="relative">
+              <label className="block mb-1 text-sm font-medium text-gray-700">Password<span className="text-red-500">*</span></label>
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                className="w-full px-4 py-2 pr-10 rounded border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-red-500"
+                required
+              />
+              <div
+                className="absolute inset-y-0 right-3 flex items-center top-6 cursor-pointer"
+                onClick={() => setShowPassword((prev) => !prev)}
+              >
+                {showPassword ? (
+                  <AiFillEyeInvisible className="text-gray-600 w-5 h-5" />
+                ) : (
+                  <AiFillEye className="text-gray-600 w-5 h-5" />
+                )}
+              </div>
+            </div>
         {/* Logo Upload */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Organization Logo
+            Organization Logo<span className="text-red-500">*</span>
           </label>
           <input
             type="file"
@@ -221,8 +299,8 @@ const EmployerRegister = () => {
           />
         </div>
  {/* District Dropdown */}
- <div>
-              <label className="block mb-1 text-sm font-medium text-gray-700">District</label>
+            <div>
+              <label className="block mb-1 text-sm font-medium text-gray-700">District<span className="text-red-500">*</span></label>
               <select
                 name="district"
                 value={formData.employer.district}
@@ -241,7 +319,7 @@ const EmployerRegister = () => {
 
             {/* Taluka (City) Dropdown */}
             <div>
-              <label className="block mb-1 text-sm font-medium text-gray-700">Taluka (City)</label>
+              <label className="block mb-1 text-sm font-medium text-gray-700">Taluka (City)<span className="text-red-500">*</span></label>
               <select
                 name="taluka"
                 value={formData.employer.taluka} // Updated to taluka
@@ -260,7 +338,7 @@ const EmployerRegister = () => {
 
             {/* City Input Field */}
             <div>
-              <label className="block mb-1 text-sm font-medium text-gray-700">City</label>
+              <label className="block mb-1 text-sm font-medium text-gray-700">City<span className="text-red-500">*</span></label>
               <input
                 type="text"
                 name="city"
@@ -270,10 +348,19 @@ const EmployerRegister = () => {
                 required
               />
             </div>
+            {Object.keys(formErrors).length > 0 && (
+  <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+    <ul className="list-disc pl-5 text-sm">
+      {Object.values(formErrors).map((error, index) => (
+        <li key={index}>{error}</li>
+      ))}
+    </ul>
+  </div>
+)}
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-lg transition duration-200"
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition duration-200"
         >
           Register
         </button>

@@ -7,11 +7,12 @@ import {
   FaUserTie,
   FaStar
 } from "react-icons/fa";
-import { Navigation } from "swiper/modules";
 import makeRequest from "../axios";
 import SearchBar from "../components/SearchBar";
 import { Swiper, SwiperSlide } from 'swiper/react';
-import "swiper/css";
+import { Navigation } from 'swiper/modules'; // ✅ CORRECT FOR VITE + SWIPER V9+
+import 'swiper/css';
+import 'swiper/css/navigation';
 
 const Home = () => {
   const [employers, setEmployers] = useState([]);
@@ -62,22 +63,22 @@ const Home = () => {
     <div className="w-full bg-gradient-to-b from-blue-50 via-white to-gray-100 min-h-screen">
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-blue-600 to-blue-400 text-white py-32 flex items-center justify-center mt-0 h-screen">
-  <div className="absolute inset-0 bg-black opacity-20"></div>
-  <div className="relative text-center px-4 z-10 flex flex-col items-center justify-center">
-    <h1 className="text-4xl sm:text-6xl font-extrabold mb-4 leading-tight">
-      Find the Right Job For You
-    </h1>
-    <p className="text-lg sm:text-2xl text-blue-100 mb-8">
-      Browse thousands of job opportunities with top companies
-      <br />
-      Discover roles that match your skills, passions, and career goals.  
-    </p>
+        <div className="absolute inset-0 bg-black opacity-20"></div>
+        <div className="relative text-center px-4 z-10 flex flex-col items-center justify-center">
+          <h1 className="text-4xl sm:text-6xl font-extrabold mb-4 leading-tight">
+            Find the Right Job For You
+          </h1>
+          <p className="text-lg sm:text-2xl text-blue-100 mb-8">
+            Browse thousands of job opportunities with top companies
+            <br />
+            Discover roles that match your skills, passions, and career goals.
+          </p>
 
-    <div className="w-full max-w-3xl mx-auto">
-      <SearchBar onSearch={fetchJobs} />
-    </div>
-  </div>
-</section>
+          <div className="w-full max-w-3xl mx-auto">
+            <SearchBar onSearch={fetchJobs} />
+          </div>
+        </div>
+      </section>
 
 
 
@@ -144,14 +145,13 @@ const Home = () => {
           Featured Companies Actively Hiring
         </h2>
 
-        <div className="px-4">
+        <div className="relative px-4">
           <Swiper
             modules={[Navigation]}
-            navigation={true}
-            loop={true}
+            navigation
+            loop={false}
             spaceBetween={16}
             centeredSlides={true}
-            autoplay={{ delay: 3000 }}
             breakpoints={{
               640: { slidesPerView: 1.2 },
               768: { slidesPerView: 2.2 },
@@ -159,6 +159,7 @@ const Home = () => {
               1280: { slidesPerView: 4 },
             }}
           >
+
             {employers.map((emp, index) => (
               <SwiperSlide key={index}>
                 <div className="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 p-4 text-center flex flex-col justify-between h-full min-h-[260px]">

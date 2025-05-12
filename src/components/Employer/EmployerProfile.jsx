@@ -7,6 +7,7 @@ import {
   FaCity,
   FaUserTie,
   FaBriefcase,
+  FaPen,
 } from "react-icons/fa";
 
 const iconMap = {
@@ -82,23 +83,35 @@ const EmployerProfile = () => {
     }
   };
   useEffect(() => {
-
     fetchProfile();
-    fetchDistricts()
+    fetchDistricts();
   }, []);
-
-  const handleChange = async(e) => {
-    const { name, value } = e.target;
-    if (name === "district") {
-      const selectedDistrict = districts.find(
-        (district) => district.district === value
-      );
-      await fetchTalukas(selectedDistrict.id);
-      setFormData((prev) => ({ ...prev, taluka: "" })); // reset taluka on district change
+  
+  useEffect(() => {
+    if (formData.district) {
+      fetchTalukas(formData.district);
     }
-    else
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  }, [formData.district, districts.length]);
+
+  const handleChange = async (e) => {
+    const { name, value } = e.target;
+  
+    if (name === "district") {
+      setFormData((prev) => ({
+        ...prev,
+        district: value,
+        taluka: "", // reset taluka when district changes
+      }));
+      await fetchTalukas(value); // pass the district ID directly
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
+  
+    
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -147,10 +160,48 @@ const EmployerProfile = () => {
   ];
 
   return (
-    <div className="max-w-3xl mx-auto mt-10 p-8 bg-gray-50 rounded-xl shadow-sm pt-20">
+    <div className="max-w-3xl mx-auto pt-10 p-8 bg-gray-50 rounded-xl shadow-sm mt-30">
       <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
         Employer Profile
       </h2>
+      {(profile.organization_logo || formData.organization_logo) && (
+  <div className="flex justify-center mb-6 relative group">
+    <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-md relative">
+      <img
+        src={
+          formData.organization_logo
+            ? URL.createObjectURL(formData.organization_logo)
+            : `https://consultancy.scholarnet.in/${profile.organization_logo}`
+        }
+        alt="Organization Logo"
+        className="w-full h-full object-cover"
+      />
+
+      {editMode && (
+        <>
+          <div
+            className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+            onClick={() => document.getElementById("logoUpload").click()}
+          >
+            <FaPen className="text-white text-lg" />
+          </div>
+          <input
+            id="logoUpload"
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) =>
+              setFormData((prev) => ({
+                ...prev,
+                organization_logo: e.target.files[0],
+              }))
+            }
+          />
+        </>
+      )}
+    </div>
+  </div>
+)}
 
       {message && (
         <p className="text-center mb-4 text-sm text-red-600 font-medium">
@@ -168,20 +219,37 @@ const EmployerProfile = () => {
               <label className="block text-gray-600 mb-1 font-medium">
                 {label}
               </label>
+
               {["district", "taluka"].includes(name) ? (
+               <select
+               name={name}
+               value={formData[name]}
+               onChange={handleChange}
+               className="block w-full px-4 py-2 rounded border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-red-500"
+               required
+             >
+               <option value="">{`Select ${label}`}</option>
+               {(name === "district" ? districts : talukas).map((item) => (
+                 <option
+                   key={item.id}
+                   value={name === "district" ? item.id : item.taluka}
+                 >
+                   {name === "district" ? item.district : item.taluka}
+                 </option>
+               ))}
+             </select>
+              ) : name === "company_id_type" ? (
                 <select
                   name={name}
                   value={formData[name]}
                   onChange={handleChange}
-                  className="block w-full px-4 py-2 rounded border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full px-4 py-2 rounded border border-gray-300 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500"
                   required
                 >
-                  <option value="">{`Select ${label}`}</option>
-                  {(name === "district" ? districts : name === "taluka" ? talukas : talukas).map((item) => (
-                    <option key={item.id} value={item[name]}>
-                      {item[name]}
-                    </option>
-                  ))}
+                  <option value="">Select ID Type</option>
+                  <option value="GST">GST</option>
+                  <option value="PAN">PAN</option>
+                  <option value="AADHAR">AADHAR</option>
                 </select>
               ) : (
                 <input
@@ -199,43 +267,8 @@ const EmployerProfile = () => {
                   required
                 />
               )}
-
             </div>
           ))}
-
-          {/* Logo Upload Field */}
-          <div className="col-span-2">
-            <label className="block text-gray-600 mb-1 font-medium">
-              Organization Logo
-            </label>
-            <input
-              type="file"
-              name="organization_logo"
-              accept="image/*"
-              onChange={(e) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  organization_logo: e.target.files[0],
-                }))
-              }
-              className="w-full px-4 py-2 rounded-lg bg-white shadow-sm focus:ring-2 focus:ring-red-400 focus:outline-none"
-            />
-            {profile.organization_logo && (
-              <div className="mt-3">
-                <button
-                  onClick={() =>
-                    window.open(
-                      `https://consultancy.scholarnet.in//${profile.organization_logo}`,
-                      "_blank"
-                    )
-                  }
-                  className="text-blue-600 underline text-sm hover:text-blue-800"
-                >
-                  View Logo
-                </button>
-              </div>
-            )}
-          </div>
 
           <div className="col-span-2 flex justify-end gap-4 mt-4">
             <button
@@ -272,22 +305,7 @@ const EmployerProfile = () => {
             ))}
           </div>
 
-          {/* Show logo in view mode */}
-          {profile.organization_logo && (
-            <div className="mt-6">
-              <button
-                onClick={() =>
-                  window.open(
-                    `https://consultancy.scholarnet.in//${profile.organization_logo}`,
-                    "_blank"
-                  )
-                }
-                className="text-blue-600 underline text-sm hover:text-blue-800"
-              >
-                Organization Logo
-              </button>
-            </div>
-          )}
+      
 
           <div className="flex justify-end mt-6">
             <button

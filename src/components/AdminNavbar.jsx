@@ -5,6 +5,8 @@ import NavItem from "./NavItem";
 const AdminNavbar = ({ onLogout }) => {
   // State to toggle mobile menu
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  // State for modal visibility
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const menuRef = useRef(null);
 
   useEffect(() => {
@@ -23,6 +25,23 @@ const AdminNavbar = ({ onLogout }) => {
   // Toggle function for mobile menu
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen((prev) => !prev);
+  };
+
+  // Handle logout button click to show the modal
+  const handleLogoutClick = () => {
+    setIsModalOpen(true);
+    setIsMobileMenuOpen(false);
+  };
+
+  // Handle confirming logout
+  const handleConfirmLogout = () => {
+    setIsModalOpen(false);
+    onLogout();
+  };
+
+  // Handle cancelling logout
+  const handleCancelLogout = () => {
+    setIsModalOpen(false);
   };
 
   return (
@@ -48,7 +67,7 @@ const AdminNavbar = ({ onLogout }) => {
 
           {/* Logout Button */}
           <button
-            onClick={onLogout}
+            onClick={handleLogoutClick}
             className="bg-red-500 text-white px-3 py-1.5 rounded-full hover:bg-red-600 text-sm"
           >
             Logout
@@ -57,7 +76,6 @@ const AdminNavbar = ({ onLogout }) => {
 
         {/* Mobile Hamburger Icon */}
         <div className="md:hidden flex items-center ml-auto">
-          {/* Hamburger Icon */}
           <button
             onClick={toggleMobileMenu}
             className="text-gray-700 focus:outline-none"
@@ -94,16 +112,42 @@ const AdminNavbar = ({ onLogout }) => {
           </NavItem>
 
           <button
-            onClick={() => {
-              setIsMobileMenuOpen(false);
-              onLogout();
-            }}
+            onClick={handleLogoutClick}
             className="bg-red-500 text-white px-4 py-1.5 rounded-full hover:bg-red-600 text-sm"
           >
             Logout
           </button>
         </div>
       </div>
+
+      {/* Modal Background and Modal */}
+      {isModalOpen && (
+        <>
+          {/* Background Overlay */}
+          <div className="fixed inset-0 bg-black opacity-50 z-40" />
+
+          {/* Modal */}
+          <div className="fixed inset-0 flex justify-center items-center z-50">
+            <div className="bg-white rounded-lg shadow-lg p-6 w-1/3 text-center">
+              <h2 className="text-lg font-semibold mb-4">Are you sure you want to log out?</h2>
+              <div className="flex justify-center gap-4">
+                <button
+                  onClick={handleConfirmLogout}
+                  className="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600"
+                >
+                  Yes
+                </button>
+                <button
+                  onClick={handleCancelLogout}
+                  className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600"
+                >
+                  No
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </nav>
   );
 };
