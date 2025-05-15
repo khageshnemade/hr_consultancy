@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import makeRequest from "../../axios";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const JobPostForm = () => {
 
@@ -24,7 +26,7 @@ const JobPostForm = () => {
   });
   const [formErrors, setFormErrors] = useState({});
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const navigate = useNavigate(); 
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -91,7 +93,6 @@ const JobPostForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    setSuccess("");
     const errors = validateForm();
 
     if (Object.keys(errors).length > 0) {
@@ -101,8 +102,11 @@ const JobPostForm = () => {
     }
     try {
       await makeRequest.post("employer/addjob/", formData);
-      setSuccess("Job posted successfully!");
+      toast.success("Job posted successfully!");
+      navigate("/employer/jobs");
+
     } catch (err) {
+      toast.error("Failed to post job. Please check your data.");
       setError("Failed to post job. Please check your data.");
     }
   };
@@ -128,9 +132,7 @@ const JobPostForm = () => {
           {error && (
             <p className="text-red-500 mb-4 text-sm text-center">{error}</p>
           )}
-          {success && (
-            <p className="text-green-500 mb-4 text-sm text-center">{success}</p>
-          )}
+         
 
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Job Type */}
@@ -161,12 +163,13 @@ const JobPostForm = () => {
               { name: "skills_required", label: "Skills Required" },
               { name: "contact_email", label: "Contact Email", type: "email" },
               { name: "contact_mobile", label: "Contact Mobile" },
-              { name: "perks", label: "Perks" },
-              { name: "qualification_in", label: "Qualification In" },
-              { name: "specialisation_in", label: "Specialisation In" },
-              { name: "terms", label: "Terms & Conditions" },
+              { name: "perks", label: "Perks", placeholder: "e.g., Health insurance, Remote work, Free snacks" },
+              { name: "qualification_in", label: "Qualification In", placeholder: "e.g., B.Tech, MBA, B.Sc" },
+              { name: "specialisation_in", label: "Specialisation In", placeholder: "e.g., Computer Science, Marketing" },
+              { name: "terms", label: "Terms & Conditions", placeholder: "e.g., Must serve minimum 6 months, NDA required" },
+
               { name: "company", label: "Company ID" },
-            ].map(({ name, label, type = "text" }) => (
+            ].map(({ name, label, type = "text", placeholder = "" }) => (
               <div key={name}>
                 <label className="block mb-2 text-sm font-medium text-gray-700">
                   {label}<span className="text-red-500">*</span>
@@ -176,6 +179,7 @@ const JobPostForm = () => {
                   name={name}
                   value={formData[name]}
                   onChange={handleChange}
+                  placeholder={placeholder}
                   className="w-full px-4 py-2 rounded border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-red-500"
                   required
                 />
@@ -183,19 +187,16 @@ const JobPostForm = () => {
             ))}
 
             {/* Last Date of Apply */}
-            <div>
-              <label className="block mb-2 text-sm font-medium text-gray-700">
-                Last Date to Apply<span className="text-red-500">*</span>
-              </label>
-              <input
-                type="date"
-                name="last_date_of_apply"
-                value={formData.last_date_of_apply}
-                onChange={handleChange}
-                className="w-full px-4 py-2 rounded border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-red-500"
-                required
-              />
-            </div>
+            <input
+              type="date"
+              name="last_date_of_apply"
+              value={formData.last_date_of_apply}
+              onChange={handleChange}
+              min={new Date(Date.now() + 86400000).toISOString().split("T")[0]} // sets min to tomorrow
+              className="w-full px-4 py-2 rounded border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-red-500"
+              required
+            />
+
 
             {/* Active Checkbox */}
             <div className="flex items-center space-x-3">

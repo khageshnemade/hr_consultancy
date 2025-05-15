@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import makeRequest from "../../axios";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom"; 
-
 import {
   FaMapMarkerAlt,
   FaBriefcase,
@@ -15,12 +13,11 @@ import { useLocation } from "react-router-dom";
 
 const JobList = () => {
   const [jobs, setJobs] = useState([]);
-  const navigate = useNavigate(); 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const userRole = JSON.parse(localStorage.getItem("user"))?.role;
 
 
+  
   const fetchJobs = async (filters = {}) => {
     try {
       setLoading(true);
@@ -40,97 +37,33 @@ const JobList = () => {
     }
   };
 
-
-  
   const handleApply = async (jobId) => {
-    const user = JSON.parse(localStorage.getItem("user"));
-  
-    // 🔐 Check if user is logged in
-    if (!user || !user.role) {
-      toast.warn("Please log in to apply for this job.");
-      navigate("/login");
-      return;
-    }
-  
-    // 👤 Only Candidates can apply
-    if (user.role !== "Candidate") {
-      toast.error("Only candidates can apply for jobs.");
-      return;
-    }
-  
     try {
       await makeRequest.post("candidate/job-apply/", {
         status: "Pending",
         job: jobId,
       });
-  
       toast.success("Successfully applied to job!");
-  
-      // ✅ Update local job state to mark as applied
-      setJobs((prevJobs) =>
-        prevJobs.map((job) =>
-          job.id === jobId ? { ...job, isApplied: true } : job
-        )
-      );
     } catch (error) {
-      console.error("Failed to apply:", error?.response?.data?.message);
-      toast.error(error?.response?.data?.message || "Failed to apply for job.");
+      toast.error(error.response.data.message);
     }
   };
-  
-
 
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const defaultTitle = params.get("title") || "";
   const defaultLocation = params.get("location") || "";
+  
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const filters = {
       title: params.get("title") || "",
       location: params.get("location") || "",
     };
-
-    const loadJobs = async () => {
-      try {
-        setLoading(true);
-
-        let appliedJobsList = [];
-
-        if (userRole === "Candidate") {
-          const appliedRes = await makeRequest.get("candidate/applied-jobs/");
-          appliedJobsList = appliedRes.data;
-        }
-
-        const queryParams = new URLSearchParams();
-        if (filters.title) queryParams.append("title", filters.title);
-        if (filters.location) queryParams.append("location", filters.location);
-
-        const jobsRes = await makeRequest.get(`candidate/search-jobs/?${queryParams.toString()}`);
-        const fetchedJobs = jobsRes.data;
-
-        // Compare based on job_id
-        const appliedJobIds = new Set(appliedJobsList.map((aj) => aj.job.job_id));
-
-        const updatedJobs = fetchedJobs.map((job) => ({
-          ...job,
-          isApplied: appliedJobIds.has(job.job_id),
-        }));
-
-        setJobs(updatedJobs);
-      } catch (err) {
-        console.error(err);
-        setError("Failed to fetch jobs");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadJobs();
+  
+    fetchJobs(filters);
   }, [location.search]);
-
-
-
+  
   return (
     <div className="max-w-5xl mx-auto px-4 py-8 pt-20">
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6 gap-4">
@@ -138,20 +71,20 @@ const JobList = () => {
           🔥 Latest Job Openings
         </h2>
         <SearchBar
-          onSearch={fetchJobs}
-          defaultTitle={defaultTitle}
-          defaultLocation={defaultLocation}
-        />
+  onSearch={fetchJobs}
+  defaultTitle={defaultTitle}
+  defaultLocation={defaultLocation}
+/>
       </div>
 
       {loading && <div className="text-blue-500">Loading jobs...</div>}
       {error && <div className="text-red-500">{error}</div>}
       {!loading && jobs.length === 0 && (
-        <div className="text-gray-500 mt-8 text-center">No jobs found matching your criteria.</div>
-      )}
+  <div className="text-gray-500 mt-8 text-center">No jobs found matching your criteria.</div>
+)}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
-        {jobs?.map((job) => (
+      {jobs?.map((job) => (
           <div
             key={job.id}
             className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all p-5"
@@ -193,24 +126,11 @@ const JobList = () => {
                 View Details
               </Link>
               <button
-                disabled={job.isApplied || new Date(job.last_date_of_apply) < new Date()}
                 onClick={() => handleApply(job.id)}
-                className={`text-sm text-white px-4 py-2 rounded-md transition ${job.isApplied
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : new Date(job.last_date_of_apply) < new Date()
-                      ? "bg-red-400 cursor-not-allowed"
-                      : "bg-green-600 hover:bg-green-700"
-                  }`}
+                className="text-sm text-white bg-green-600 hover:bg-green-700 px-4 py-2 rounded-md transition"
               >
-                {job.isApplied
-                  ? "Already Applied"
-                  : new Date(job.last_date_of_apply) < new Date()
-                    ? "Expired"
-                    : "Apply Now"}
+                Apply Now
               </button>
-
-
-
             </div>
           </div>
         ))}

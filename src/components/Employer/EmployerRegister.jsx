@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import makeRequest from "../../axios";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 const EmployerRegister = () => {
   const [showPassword, setShowPassword] = useState(false);
     const [formErrors, setFormErrors] = useState({});
@@ -22,8 +24,7 @@ const EmployerRegister = () => {
       organization_logo: null,
     },
   });
-  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/;
-
+const navigate=useNavigate()
     const [districts, setDistricts] = useState([]);
     const [talukas, setTalukas] = useState([]);
   
@@ -155,8 +156,9 @@ const EmployerRegister = () => {
         },
       });
       console.log("Employer registered:", res.data);
-      alert("Employer registered successfully!");
-
+      toast.success("Employer registered successfully!");
+   
+      navigate('/login');
       // Reset form
       setFormData({
         name: "",
@@ -177,10 +179,20 @@ const EmployerRegister = () => {
         },
       });
     } catch (error) {
-      console.error("Registration failed:", error.response?.data || error.message);
-      alert("Registration failed. Please check your input.");
-    }
+      const data = error.response?.data;
+    
+      if (data && typeof data === "object") {
+        const messages = Object.entries(data)
+          .map(([field, errors]) => `${field}: ${errors.join(", ")}`)
+          .join(" | ");
+        toast.error(messages);
+      } else {
+        toast.error("Registration failed. Please check your input.");
+      }
+    
+      console.error("Registration failed:", data);
   };
+}
 
 
   return (

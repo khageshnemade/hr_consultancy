@@ -7,18 +7,16 @@ import { useParams } from "react-router-dom";
 const AppliedJobs = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedJobDetail, setSelectedJobDetail] = useState(null);
   const { status } = useParams();
+
   useEffect(() => {
     makeRequest
       .get("candidate/applied-jobs/")
       .then((res) => {
         let allJobs = res.data;
         if (status) {
-          // Normalize for consistent casing
-          console.log(status);
-          
           const normalizedStatus = status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
-          console.log(normalizedStatus);
           allJobs = allJobs.filter((job) => job.status === normalizedStatus);
         }
         setJobs(allJobs);
@@ -30,13 +28,16 @@ const AppliedJobs = () => {
       });
   }, [status]);
 
-  if (loading) {
-    return (
-      <div className="text-center mt-10 text-blue-600 text-lg pt-20">
-        Loading applied jobs...
-      </div>
-    );
-  }
+  const handleViewDetails = (jobId) => {
+    makeRequest
+      .get(`candidate/jobdetail/${jobId}/`)
+      .then((res) => {
+        setSelectedJobDetail(res.data);
+      })
+      .catch((err) => {
+        console.error("Error fetching job detail:", err);
+      });
+  };
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-10 pt-20">
@@ -51,15 +52,29 @@ const AppliedJobs = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {jobs.map((job) => (
-            <JobCard key={job.id} job={job} />
+            <JobCard key={job.id} job={job} onViewDetails={handleViewDetails} />
           ))}
+        </div>
+      )}
+
+      {selectedJobDetail && (
+        <div className="mt-8 p-6 border rounded-lg shadow-md bg-gray-50">
+          <h3 className="text-xl font-semibold mb-4 text-blue-800">
+            📞 Contact Details
+          </h3>
+          <p><strong>Email:</strong> {selectedJobDetail.contact_email}</p>
+          <p><strong>Mobile:</strong> {selectedJobDetail.contact_mobile}</p>
         </div>
       )}
     </div>
   );
 };
 
+
 const JobCard = ({ job }) => {
+  const [jobDetail, setJobDetail] = useState(null);
+  const [loadingDetail, setLoadingDetail] = useState(true);
+
   const statusStyles = {
     Pending: "bg-yellow-100 text-yellow-700",
     Shortlisted: "bg-green-100 text-green-700",
@@ -69,13 +84,24 @@ const JobCard = ({ job }) => {
 
   const statusClass = statusStyles[job.status] || "bg-gray-100 text-gray-700";
 
+  useEffect(() => {
+    makeRequest
+      .get(`candidate/jobdetail/${job.job.job_id}/`)
+      .then((res) => {
+        setJobDetail(res.data);
+        setLoadingDetail(false);
+      })
+      .catch((err) => {
+        console.error("Error fetching job detail:", err);
+        setLoadingDetail(false);
+      });
+  }, [job.job.job_id]);
+
   return (
     <div className="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-lg transition-all p-6">
       <div className="flex justify-between items-start mb-4">
         <h3 className="text-xl font-semibold text-blue-700">{job.job.title}</h3>
-        <span
-          className={`text-xs font-medium px-3 py-1 rounded-full ${statusClass}`}
-        >
+        <span className={`text-xs font-medium px-3 py-1 rounded-full ${statusClass}`}>
           {job.status}
         </span>
       </div>
@@ -97,9 +123,23 @@ const JobCard = ({ job }) => {
           <FaClock className="text-purple-500" />
           Applied On: {dayjs(job.applied_on).format("DD MMM YYYY, hh:mm A")}
         </div>
+
+        {/* Contact Details */}
+        {loadingDetail ? (
+          <p className="text-gray-400 italic">Loading contact details...</p>
+        ) : jobDetail ? (
+          <div className="mt-4">
+            <p><strong>Email:</strong> {jobDetail.contact_email}</p>
+            <p><strong>Mobile:</strong> {jobDetail.contact_mobile}</p>
+          </div>
+        ) : (
+          <p className="text-red-500 text-sm">Failed to load contact info.</p>
+        )}
       </div>
     </div>
   );
 };
+
+
 
 export default AppliedJobs;

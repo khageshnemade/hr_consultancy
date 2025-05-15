@@ -37,3 +37,158 @@ candidate  1.
 candidate  1.
 candidate  1.
 candidate  1.
+
+		
+東 API Overview for Study Portal Project						
+隼 1. Core App (core_app)						
+						
+| **HTTP Method** | **Endpoint**        | **Description**                     | **SQL Query / DB Interaction**                                                                |						
+| --------------- | ------------------- | ----------------------------------- | --------------------------------------------------------------------------------------------- |						
+| POST            | `/login/`           | User login and JWT token generation | -                                                                                             |						
+| POST            | `/register-student` | Register a new student              | `INSERT INTO students (name	 email	 password	 ...) VALUES (?	 ?	 ?	 ...);`                    |
+| POST            | `/register-school`  | Register a new school               | `INSERT INTO schools (name	 address	 contact_info	 ...) VALUES (?	 ?	 ?	 ...);`               |
+| POST            | `/register-teacher` | Register a new teacher              | `INSERT INTO teachers (name	 subject	 school_id	 ...) VALUES (?	 ?	 ?	 ...);`                 |
+| POST            | `/register-parent`  | Register a new parent               | `INSERT INTO parents (name	 student_id	 contact_info	 ...) VALUES (?	 ?	 ?	 ...);`            |
+| GET             | `/chat/`            | Retrieve chat messages              | `SELECT * FROM chat_messages WHERE sender_id = ? AND receiver_id = ?;`                        |						
+| POST            | `/chat/`            | Send a new chat message             | `INSERT INTO chat_messages (sender_id	 receiver_id	 message	 timestamp) VALUES (?	 ?	 ?	 ?);` |
+						
+隼 2. Admin App (admin_app)						
+| **HTTP Method** | **Endpoint**                               | **Description**                                    | **SQL Query / DB Interaction**                                                                                                                                                                                                                          |						
+| --------------- | ------------------------------------------ | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |						
+| POST            | `/add-class`                               | Add a new class                                    | `INSERT INTO classes (name	 grade	 school_id	 ...) VALUES (?	 ?	 ?	 ...);`                                                                                                                                                                              |
+| GET             | `/get-class`                               | Retrieve all classes                               | `SELECT * FROM classes WHERE school_id = ?;`                                                                                                                                                                                                            |						
+| GET             | `/get-classname`                           | Retrieve class names                               | `SELECT name FROM classes WHERE school_id = ?;`                                                                                                                                                                                                         |						
+| DELETE          | `/delete-class/<int:class_id>`             | Delete a class by ID                               | `DELETE FROM classes WHERE id = ?;`                                                                                                                                                                                                                     |						
+| POST            | `/add-class-subject`                       | Add a new subject to a class                       | `INSERT INTO class_subjects (class_id	 subject_id) VALUES (?	 ?);`                                                                                                                                                                                      |				
+| GET             | `/get-all-subject`                         | Retrieve all subjects                              | `SELECT * FROM subjects;`                                                                                                                                                                                                                               |						
+| POST            | `/add-subject-chapter`                     | Add a new chapter to a subject                     | `INSERT INTO subject_chapters (subject_id	 chapter_name	 ...) VALUES (?	 ?	 ...);`                                                                                                                                                                      |		
+| GET             | `/all-chapters-bysubject/<int:subject_id>` | Retrieve all chapters for a specific subject       | `SELECT * FROM subject_chapters WHERE subject_id = ?;`                                                                                                                                                                                                  |						
+| GET             | `/views-one-chapter/<int:chapter_id>`      | View details of a specific chapter                 | `SELECT * FROM subject_chapters WHERE id = ?;`                                                                                                                                                                                                          |						
+| PUT             | `/update-one-chapter/<int:chapter_id>`     | Update details of a specific chapter               | `UPDATE subject_chapters SET chapter_name = ?	 ... WHERE id = ?;`                                                                                                                                                                                       |					
+| GET             | `/get-schools-data`                        | Retrieve data of all schools                       | `SELECT * FROM schools;`                                                                                                                                                                                                                                |						
+| PUT             | `/verify-schools-data/<int:school_id>`     | Verify data of a specific school                   | `UPDATE schools SET verified = TRUE WHERE id = ?;`                                                                                                                                                                                                      |						
+| GET             | `/get-teacher-data/<int:school_id>`        | Retrieve data of all teachers in a specific school | `SELECT * FROM teachers WHERE school_id = ?;`                                                                                                                                                                                                           |						
+| GET             | `/get-student-data/<int:school_id>`        | Retrieve data of all students in a specific school | `SELECT * FROM students WHERE school_id = ?;`                                                                                                                                                                                                           |						
+| GET             | `/admin-dashboard-data`                    | Retrieve dashboard data for the admin              | `SELECT COUNT(*) AS total_schools	 COUNT(DISTINCT school_id) AS total_teachers	 COUNT(DISTINCT student_id) AS total_students FROM schools LEFT JOIN teachers ON schools.id = teachers.school_id LEFT JOIN students ON schools.id = students.school_id;` |				
+| GET             | `/admin-chat-users`                        | Retrieve list of users for admin chat              | `SELECT DISTINCT sender_id AS user_id FROM chat_messages WHERE receiver_id = ? UNION SELECT DISTINCT receiver_id AS user_id FROM chat_messages WHERE sender_id = ?;`                                                                                    |						
+						
+						
+隼 3. Parent App (parent_app)						
+| **HTTP Method** | **Endpoint**                 | **Description**                           | **SQL Query / DB Interaction**                         |						
+| --------------- | ---------------------------- | ----------------------------------------- | ------------------------------------------------------ |						
+| GET             | `/get-parent-profile`        | Retrieve profile of the logged-in parent  | `SELECT * FROM parents WHERE user_id = ?;`             |						
+| GET             | `/get-meal-menus`            | Retrieve all available meal menus         | `SELECT * FROM meal_menus;`                            |						
+| GET             | `/get-today-meal`            | Retrieve today's meal menu                | `SELECT * FROM meal_menus WHERE date = CURDATE();`     |						
+| GET             | `/get-parent-announcement`   | Retrieve all announcements for the parent | `SELECT * FROM announcements WHERE school_id = ?;`     |						
+| GET             | `/get-parent-summeractivity` | Retrieve summer activities for the parent | `SELECT * FROM summer_activities WHERE school_id = ?;` |						
+						
+						
+隼 4. School App (school_app)						
+| Method | Endpoint                                   | Description                       | SQL Query                                                                                                 |						
+| ------ | ------------------------------------------ | --------------------------------- | --------------------------------------------------------------------------------------------------------- |						
+| GET    | `/get-school-profile`                      | Retrieve logged-in school profile | `SELECT * FROM SchoolModel WHERE user_id = ?`                                                             |						
+| GET    | `/all-teacher-show`                        | Show all teachers of school       | `SELECT * FROM TeacherModel WHERE school_id = ?`                                                          |						
+| PUT    | `/verify-teacher/<unique_id>`              | Verify teacher                    | `UPDATE TeacherModel SET is_verified = TRUE WHERE unique_id = ?`                                          |						
+| POST   | `/teacher-subject-map`                     | Map teacher to subject            | `INSERT INTO TeacherSubject (teacher_id	 subject_id) VALUES (?	 ?)`                                       |				
+| GET    | `/teacher-get-material/<unique_id>`        | Get teacher material              | `SELECT * FROM Materials WHERE teacher_id = (SELECT id FROM TeacherModel WHERE unique_id = ?)`            |						
+| GET    | `/get-classwise-students/<class_id>`       | Get students by class             | `SELECT * FROM StudentModel WHERE class_assigned_id = ?`                                                  |						
+| PUT    | `/get-verify-students/<student_unique_id>` | Verify student                    | `UPDATE StudentModel SET is_verified = TRUE WHERE student_unique_id = ?`                                  |						
+| GET    | `/stud-mock-results/<student_id>`          | Get student mock results          | `SELECT * FROM MockResults WHERE student_id = ?`                                                          |						
+| GET    | `/all-parent-show`                         | Get all parents                   | `SELECT * FROM ParentModel WHERE school_id = ?`                                                           |						
+| PUT    | `/verify-parent/<unique_id>`               | Verify parent                     | `UPDATE ParentModel SET is_verified = TRUE WHERE unique_id = ?`                                           |						
+| GET    | `/get-all-class`                           | Get all classes                   | `SELECT * FROM Class WHERE school_id = ?`                                                                 |						
+| GET    | `/get-classwise-subject/<class_id>`        | Get subjects by class             | `SELECT * FROM ClassSubjectModel WHERE class_for_subject_id = ?`                                          |						
+| GET    | `/chapters-bysubject/<subject_id>`         | Get chapters by subject           | `SELECT * FROM SubjectChapterModel WHERE subject_id = ?`                                                  |						
+| GET    | `/view-chapter-material/<chapter_id>`      | View materials of chapter         | `SELECT * FROM ChapterMaterial WHERE chapter_id = ?`                                                      |						
+| GET    | `/view-school-recent-chat`                 | Get recent chats                  | `SELECT * FROM ChatMessages WHERE sender_school_id = ? OR receiver_school_id = ? ORDER BY timestamp DESC` |						
+| POST   | `/create-annoucement`                      | Create announcement               | `INSERT INTO Announcements (title	 content	 ...) VALUES (?	 ?)`                                           |			
+| PUT    | `/update-annoucement/<announce_id>`        | Update announcement               | `UPDATE Announcements SET title = ?	 content = ? WHERE id = ?`                                            |					
+| GET    | `/get-annoucement/<announce_id>`           | Get specific announcement         | `SELECT * FROM Announcements WHERE id = ?`                                                                |						
+| GET    | `/show-all-annoucement`                    | Show all announcements            | `SELECT * FROM Announcements`                                                                             |						
+| GET    | `/teacherwise-homework/<teacher_id>`       | Get homework by teacher           | `SELECT * FROM Homework WHERE teacher_id = ?`                                                             |						
+| POST   | `/school-meal-create`                      | Create school meal                | `INSERT INTO SchoolMeal (meal_name	 date	 ...) VALUES (?	 ?)`                                             |			
+| GET    | `/get-all-meal`                            | Get all meals                     | `SELECT * FROM SchoolMeal`                                                                                |						
+| GET    | `/get-one-mealinfo/<meal_id>`              | Get one meal info                 | `SELECT * FROM SchoolMeal WHERE id = ?`                                                                   |						
+| PUT    | `/get-update-mealinfo/<meal_id>`           | Update meal info                  | `UPDATE SchoolMeal SET meal_name = ?	 date = ? WHERE id = ?`                                              |					
+| DELETE | `/get-delete-mealinfo/<meal_id>`           | Delete meal info                  | `DELETE FROM SchoolMeal WHERE id = ?`                                                                     |						
+| POST   | `/school-activity-create`                  | Create school activity            | `INSERT INTO SchoolActivity (activity_name	 date	 ...) VALUES (?	 ?)`                                     |			
+| GET    | `/get-all-activity`                        | Get all activities                | `SELECT * FROM SchoolActivity`                                                                            |						
+| GET    | `/get-one-activityinfo/<activity_id>`      | Get one activity                  | `SELECT * FROM SchoolActivity WHERE id = ?`                                                               |						
+| PUT    | `/get-update-activityinfo/<activity_id>`   | Update activity                   | `UPDATE SchoolActivity SET activity_name = ?	 date = ? WHERE id = ?`                                      |					
+| DELETE | `/get-delete-activityinfo/<activity_id>`   | Delete activity                   | `DELETE FROM SchoolActivity WHERE id = ?`                                                                 |						
+| POST   | `/school-exam-create`                      | Create exam                       | `INSERT INTO Exams (title	 subject_id	 ...) VALUES (?	 ?)`                                                |			
+| GET    | `/get-all-exam`                            | Get all exams                     | `SELECT * FROM Exams`                                                                                     |						
+| PUT    | `/active-deactive-exam/<exam_id>`          | Activate/Deactivate exam          | `UPDATE Exams SET is_active = NOT is_active WHERE id = ?`                                                 |						
+| GET    | `/get-one-exam/<exam_id>`                  | Get one exam                      | `SELECT * FROM Exams WHERE id = ?`                                                                        |						
+| PUT    | `/get-update-exam/<exam_id>`               | Update exam                       | `UPDATE Exams SET title = ?	 subject_id = ? WHERE id = ?`                                                 |					
+| DELETE | `/get-delete-exam/<exam_id>`               | Delete exam                       | `DELETE FROM Exams WHERE id = ?`                                                                          |						
+| POST   | `/add_question`                            | Add question                      | `INSERT INTO ExamQuestions (exam_id	 question	 ...) VALUES (?	 ?)`                                        |			
+| GET    | `/show_question/<exam_id>`                 | Get questions of exam             | `SELECT * FROM ExamQuestions WHERE exam_id = ?`                                                           |						
+| GET    | `/get_question/<question_id>`              | Get one question                  | `SELECT * FROM ExamQuestions WHERE id = ?`                                                                |						
+| PUT    | `/update_question/<question_id>`           | Update question                   | `UPDATE ExamQuestions SET question = ? WHERE id = ?`                                                      |						
+| DELETE | `/delete_question/<question_id>`           | Delete question                   | `DELETE FROM ExamQuestions WHERE id = ?`                                                                  |						
+| POST   | `/declare_result/<exam_code>`              | Declare result                    | `UPDATE Exams SET result_declared = TRUE WHERE code = ?`                                                  |						
+| GET    | `/get_declare_result/<exam_code>`          | Get result by exam code           | `SELECT * FROM ExamResults WHERE exam_code = ?`                                                           |						
+						
+祷 Student App API Endpoints with SQL Queries						
+						
+| Method | Endpoint                                   | Description                                     | SQL Query                                                                                   |						
+| ------ | ------------------------------------------ | ----------------------------------------------- | ------------------------------------------------------------------------------------------- |						
+| GET    | `/get-student-profile`                     | Retrieve logged-in student profile              | `SELECT * FROM StudentModel WHERE user_id = ?`                                              |						
+| GET    | `/student-show-subjects`                   | Get all subjects for the student                | `SELECT * FROM Subjects WHERE student_id = ?`                                               |						
+| GET    | `/student-chapters-bysubject/<subject_id>` | Get chapters by subject for student             | `SELECT * FROM Chapters WHERE subject_id = ?`                                               |						
+| GET    | `/show-chapter-materials/<chapter_id>`     | Get chapter materials                           | `SELECT * FROM ChapterMaterial WHERE chapter_id = ?`                                        |						
+| GET    | `/get-material/<material_id>`              | Get specific material                           | `SELECT * FROM Materials WHERE id = ?`                                                      |						
+| GET    | `/show-student-mockexam/<chapter_id>`      | Show mock exam for student by chapter           | `SELECT * FROM MockExams WHERE chapter_id = ?`                                              |						
+| GET    | `/show-mockexam-questions/<mock_exam_id>`  | Get questions for a specific mock exam          | `SELECT * FROM MockExamQuestions WHERE mock_exam_id = ?`                                    |						
+| POST   | `/mock-submit-answers/<mock_exam_id>`      | Submit answers for mock exam                    | `INSERT INTO MockExamAnswers (mock_exam_id	 student_id	 answer) VALUES (?	 ?	 ?)`           |		
+| GET    | `/mock-result-feedback/<mock_exam_id>`     | Get feedback for mock exam                      | `SELECT * FROM MockExamResults WHERE mock_exam_id = ?`                                      |						
+| GET    | `/stud-chat-users`                         | Get list of chat users for the student          | `SELECT * FROM ChatUsers WHERE student_id = ?`                                              |						
+| GET    | `/get-stud-announcement`                   | Get student announcements                       | `SELECT * FROM Announcements WHERE student_id = ?`                                          |						
+| GET    | `/get-teach-homework`                      | Get homework assigned by teacher                | `SELECT * FROM Homework WHERE teacher_id = ?`                                               |						
+| GET    | `/get-stud-summeractivity`                 | Get summer activity details for student         | `SELECT * FROM SummerActivities WHERE student_id = ?`                                       |						
+| GET    | `/get-student-exam`                        | Get all exams available for the student         | `SELECT * FROM Exams WHERE student_id = ?`                                                  |						
+| POST   | `/student-start-exam/`                     | Start exam for student                          | `INSERT INTO ExamAttempts (student_id	 exam_id) VALUES (?	 ?)`                              |				
+| GET    | `/exam-questions/<exam_id>`                | Get questions for a specific exam               | `SELECT * FROM ExamQuestions WHERE exam_id = ?`                                             |						
+| POST   | `/save-answer/`                            | Save answer for exam                            | `INSERT INTO StudentAnswers (student_id	 exam_id	 question_id	 answer) VALUES (?	 ?	 ?	 ?)` |
+| GET    | `/get_selected_answers/<exam_id>`          | Get all selected answers for a given exam       | `SELECT * FROM StudentAnswers WHERE exam_id = ?`                                            |						
+| GET    | `/show_one_answer/<question_id>/<exam_id>` | Get a specific answer for a question in an exam | `SELECT * FROM StudentAnswers WHERE exam_id = ? AND question_id = ?`                        |						
+| POST   | `/student-submit-exam/`                    | Submit exam for the student                     | `UPDATE ExamAttempts SET status = 'submitted' WHERE student_id = ? AND exam_id = ?`         |						
+| GET    | `/get_completed-exams/`                    | Get all completed exams for the student         | `SELECT * FROM Exams WHERE student_id = ? AND status = 'completed'`                         |						
+| GET    | `/get-exam-result/<exam_id>`               | Get exam result for the student                 | `SELECT * FROM ExamResults WHERE exam_id = ? AND student_id = ?`                            |						
+						
+祷 Super App API Endpoints with SQL Queries						
+| Method | Endpoint                        | Description                        | SQL Query                                                              |						
+| ------ | ------------------------------- | ---------------------------------- | ---------------------------------------------------------------------- |						
+| GET    | `/get-register-admin`           | Register an admin                  | `INSERT INTO Admins (username	 password	 email) VALUES (?	 ?	 ?)`      |		
+| GET    | `/get-admin-data`               | Get all admin data                 | `SELECT * FROM Admins`                                                 |						
+| GET    | `/one-admin-data/<admin_id>`    | Get data of a specific admin by ID | `SELECT * FROM Admins WHERE id = ?`                                    |						
+| PUT    | `/update-admin-data/<admin_id>` | Update admin data by ID            | `UPDATE Admins SET username = ?	 password = ?	 email = ? WHERE id = ?` |				
+						
+						
+祷 Teacher App API Endpoints with SQL Queries						
+| Method | Endpoint                               | Description                              | SQL Query                                                                     |						
+| ------ | -------------------------------------- | ---------------------------------------- | ----------------------------------------------------------------------------- |						
+| GET    | `/get-teacher-profile`                 | Get teacher profile                      | `SELECT * FROM Teachers WHERE id = ?`                                         |						
+| GET    | `/teachers-class-subjects`             | Get the subjects assigned to the teacher | `SELECT subjects FROM TeacherSubjects WHERE teacher_id = ?`                   |						
+| GET    | `/all-chapters-bysubject/<subject_id>` | Get all chapters for a specific subject  | `SELECT * FROM Chapters WHERE subject_id = ?`                                 |						
+| POST   | `/add-chapter-material`                | Add material for a chapter               | `INSERT INTO ChapterMaterials (chapter_id	 material_data) VALUES (?	 ?)`      |				
+| GET    | `/show-chapter-materials/<chapter_id>` | Show materials for a chapter             | `SELECT * FROM ChapterMaterials WHERE chapter_id = ?`                         |						
+| GET    | `/get_material/<material_id>`          | Get specific material by ID              | `SELECT * FROM ChapterMaterials WHERE id = ?`                                 |						
+| PUT    | `/update_material/<material_id>`       | Update specific material                 | `UPDATE ChapterMaterials SET material_data = ? WHERE id = ?`                  |						
+| DELETE | `/delete_material/<material_id>`       | Delete specific material                 | `DELETE FROM ChapterMaterials WHERE id = ?`                                   |						
+| POST   | `/create-teacher-mockexam`             | Create a mock exam for a teacher         | `INSERT INTO MockExams (teacher_id	 subject_id	 exam_data) VALUES (?	 ?	 ?)`  |		
+| GET    | `/show-teacher-mockexam/<chapter_id>`  | Show mock exams for a chapter            | `SELECT * FROM MockExams WHERE chapter_id = ?`                                |						
+| POST   | `/add-mockexam-question`               | Add a question to a mock exam            | `INSERT INTO MockExamQuestions (exam_id	 question_text) VALUES (?	 ?)`        |				
+| GET    | `/show-mock-questions/<mock_exam_id>`  | Show questions for a specific mock exam  | `SELECT * FROM MockExamQuestions WHERE mock_exam_id = ?`                      |						
+| GET    | `/mock-get-question/<question_id>`     | Get a specific question from mock exam   | `SELECT * FROM MockExamQuestions WHERE id = ?`                                |						
+| PUT    | `/mock-update-question/<question_id>`  | Update a specific mock exam question     | `UPDATE MockExamQuestions SET question_text = ? WHERE id = ?`                 |						
+| GET    | `/get-class-students/<class_id>`       | Get all students in a class              | `SELECT * FROM Students WHERE class_id = ?`                                   |						
+| GET    | `/get-mock-results/<mock_exam_id>`     | Get results for a specific mock exam     | `SELECT * FROM MockResults WHERE mock_exam_id = ?`                            |						
+| POST   | `/add-teacher-feedback`                | Add feedback from a teacher              | `INSERT INTO TeacherFeedback (teacher_id	 feedback_data) VALUES (?	 ?)`       |				
+| GET    | `/teach-chat-users`                    | Get list of chat users for teachers      | `SELECT * FROM ChatUsers WHERE teacher_id = ?`                                |						
+| GET    | `/get-teach-announcement`              | Get announcements for teachers           | `SELECT * FROM Announcements WHERE target_role = 'Teacher'`                   |						
+| POST   | `/create-homework`                     | Create homework for students             | `INSERT INTO Homework (teacher_id	 class_id	 homework_data) VALUES (?	 ?	 ?)` |		
+| GET    | `/all-homework`                        | Get all homework assigned by teacher     | `SELECT * FROM Homework WHERE teacher_id = ?`                                 |						
+| PUT    | `/update-homework/<homework_id>`       | Update homework details                  | `UPDATE Homework SET homework_data = ? WHERE id = ?`                          |						
+| GET    | `/get-one-homework/<homework_id>`      | Get details of a specific homework       | `SELECT * FROM Homework WHERE id = ?`                                         |						

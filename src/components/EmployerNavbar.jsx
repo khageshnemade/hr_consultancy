@@ -69,11 +69,16 @@ const EmployerNavbar = ({ onLogout }) => {
           {/* Profile Picture */}
           <Link to="/employer/profile">
             <div className="w-10 h-10 rounded-full overflow-hidden cursor-pointer">
-              <img
-                src={`https://consultancy.scholarnet.in/${profile?.organization_logo}`}
-                alt="Profile"
-                className="w-full h-full object-cover"
-              />
+            <img
+  src={
+    profile?.organization_logo
+      ? `https://consultancy.scholarnet.in/${profile.organization_logo}`
+      : "/images/default_logo.jpg"
+  }
+  alt="Organization Logo"
+  className="w-full h-full object-cover"
+/>
+
             </div>
           </Link>
 

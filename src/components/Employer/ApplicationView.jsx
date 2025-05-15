@@ -44,13 +44,13 @@ const ApplicationView = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 py-6 px-4 pt-20">
       <div className="max-w-6xl mx-auto">
-      
+
 
         <h2 className="text-4xl font-bold text-center text-indigo-700 mb-10">
           Applications for {title}
         </h2>
-  {/* Back Button */}
-  <button
+        {/* Back Button */}
+        <button
           onClick={() => navigate(-1)}
           className="flex items-center text-indigo-600 hover:text-indigo-800 font-medium mb-6"
         >
@@ -77,18 +77,20 @@ const ApplicationView = () => {
                 >
                   <div className="space-y-2">
                     <div className="text-sm text-gray-700 space-y-1">
-                      <p><strong>Role:</strong> {app.role}</p>
-                      <p><strong>Company:</strong> {app.company_name}</p>
+                      <p><strong>Name:</strong> {candidate?.user?.name || "N/A"}</p>
+                      <p><strong>Email:</strong> {candidate?.user?.email || "N/A"}</p>
+                      <p><strong>Mobile:</strong> {candidate?.user?.mobile || "N/A"}</p>
+                      <p><strong>Skills:</strong> {candidate?.skills || "N/A"}</p>
+
                       <p>
                         <strong>Status:</strong>{" "}
                         <span
-                          className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${
-                            app.status === "Shortlisted"
+                          className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${app.status === "Shortlisted"
                               ? "bg-green-100 text-green-700"
                               : app.status === "Selected"
-                              ? "bg-blue-100 text-blue-700"
-                              : "bg-yellow-100 text-yellow-700"
-                          }`}
+                                ? "bg-blue-100 text-blue-700"
+                                : "bg-yellow-100 text-yellow-700"
+                            }`}
                         >
                           {app.status}
                         </span>

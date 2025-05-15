@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import makeRequest from "../../axios";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const CandidateRegister = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -16,11 +18,11 @@ const CandidateRegister = () => {
       dob: "",
       gender: "",
       district: "",
-      taluka: "", // Taluka for city
-      city: "", // City input field for free text
+      taluka: "", 
+      city: "", 
     },
   });
-  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/;
+  const navigate=useNavigate()
 
   const [districts, setDistricts] = useState([]);
   const [talukas, setTalukas] = useState([]);
@@ -127,9 +129,9 @@ const CandidateRegister = () => {
 
     try {
       await makeRequest.post("candidate/registration/", formData);
-      alert("Candidate registered successfully!");
+      toast.success("Candidate registered successfully!");
+      navigate('/login');
 
-      // Reset form and errors
       setFormData({
         name: "",
         mobile: "",
@@ -147,8 +149,17 @@ const CandidateRegister = () => {
       });
       setFormErrors({});
     } catch (error) {
-      console.error("Registration failed:", error.response?.data || error.message);
-      alert("Registration failed. Please check your input.");
+      if (error.response && error.response.data) {
+        const errors = error.response.data;
+        for (let field in errors) {
+          if (Array.isArray(errors[field])) {
+            toast.error(`${field.charAt(0).toUpperCase() + field.slice(1)} - ${errors[field][0]}`);
+          } else {
+            toast.error(`${field} - ${errors[field]}`);
+          }
+        }
+      }
+    
     }
   };
 
@@ -345,3 +356,11 @@ const CandidateRegister = () => {
 };
 
 export default CandidateRegister;
+
+
+
+
+
+
+						
+				
