@@ -192,3 +192,182 @@ candidate  1.
 | GET    | `/all-homework`                        | Get all homework assigned by teacher     | `SELECT * FROM Homework WHERE teacher_id = ?`                                 |						
 | PUT    | `/update-homework/<homework_id>`       | Update homework details                  | `UPDATE Homework SET homework_data = ? WHERE id = ?`                          |						
 | GET    | `/get-one-homework/<homework_id>`      | Get details of a specific homework       | `SELECT * FROM Homework WHERE id = ?`                                         |						
+
+
+
+
+
+Deployment of NodeJs project
+mkdir -p ~/nodejsProject
+cd ~/nodejsProject
+npm init -y
+npm install express
+nano app.js
+------
+const express = require('express');
+const app = express();
+const port = 3000;
+
+app.use(express.json());
+
+// API 1 - Hello World
+app.get('/', (req, res) => {
+    res.send('Hello World from Node.js!');
+});
+
+// API 2 - Get current server time
+app.get('/time', (req, res) => {
+    res.json({ time: new Date().toISOString() });
+});
+
+// API 3 - Echo received data
+app.post('/echo', (req, res) => {
+    res.json({ received: req.body });
+});
+
+// API 4 - Add two numbers
+app.get('/add', (req, res) => {
+    const a = parseFloat(req.query.a);
+    const b = parseFloat(req.query.b);
+    if (isNaN(a) || isNaN(b)) {
+        return res.status(400).json({ error: 'Invalid numbers' });
+    }
+    res.json({ result: a + b });
+});
+
+app.listen(port, () => {
+    console.log(`Server running on http://localhost:${port}`);
+});
+******
+
+
+there are two ways to deploy app 
+1.using nohup ---- nohup node app.js > output.log 2>&1 &
+sudo nano /etc/nginx/sites-available/nodejsProject
+server {
+    listen 80;
+    server_name api.node.khagesh.space;  # Replace with your actual domain or server IP
+
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+
+sudo ln -s /etc/nginx/sites-available/nodejsProject /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl restart nginx
+
+
+
+using pm2
+
+📁 1. Create Folder Structure
+mkdir -p ~/project/node/api.node.khagesh.space
+cd ~/project/node/api.node.khagesh.space
+
+📦 2. Initialize a Node.js App
+npm init -y
+npm install express
+
+📝 3. Create app.js (4 Simple APIs)
+nano app.js
+-------
+const express = require('express');
+const app = express();
+const port = 3001; // Use a unique port for this app
+
+app.use(express.json());
+
+app.get('/', (req, res) => {
+    res.send('Welcome to api.node.khagesh.space');
+});
+
+app.get('/time', (req, res) => {
+    res.json({ time: new Date().toISOString() });
+});
+
+app.post('/echo', (req, res) => {
+    res.json({ received: req.body });
+});
+
+app.get('/add', (req, res) => {
+    const a = parseFloat(req.query.a);
+    const b = parseFloat(req.query.b);
+    if (isNaN(a) || isNaN(b)) {
+        return res.status(400).json({ error: 'Invalid numbers' });
+    }
+    res.json({ result: a + b });
+});
+
+app.listen(port, () => {
+    console.log(`Server running on http://localhost:${port}`);
+});
+
+******
+
+🔁 4. Start App with PM2
+pm2 start app.js --name api-node-khagesh-space
+pm2 save
+pm2 startup
+-------------gives command like 
+sudo env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -u khage --hp /home/khage
+**************** run this
+pm2 save
+
+🌐 5. Configure Nginx for Reverse Proxy
+sudo nano /etc/nginx/sites-available/api.node.khagesh.space
+-----
+server {
+    listen 80;
+    server_name api.node.khagesh.space;
+
+    location / {
+        proxy_pass http://localhost:3001;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+***********
+sudo ln -s /etc/nginx/sites-available/api.node.khagesh.space /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl restart nginx
+sudo systemctl reload nginx
+
+🔐 6. Enable HTTPS with Let's Encrypt (Optional but Recommended)
+sudo apt install certbot python3-certbot-nginx -y
+sudo certbot --nginx -d api.node.khagesh.space
+
+
+install MongoDB on server
+🔁 1. Remove broken key file (if it exists) 
+sudo rm /usr/share/keyrings/mongodb-server-6.0.gpg
+✅ 2. Download the Correct MongoDB 6.0 GPG Key and Save It Properly
+curl -fsSL https://pgp.mongodb.com/server-6.0.asc | \
+  gpg --dearmor | \
+  sudo tee /usr/share/keyrings/mongodb-server-6.0.gpg > /dev/null
+
+🧾 3. Recreate the APT Source File
+
+sudo rm /etc/apt/sources.list.d/mongodb-org-6.0.list
+echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-6.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/6.0 multiverse" | \
+sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
+
+sudo apt update
+sudo apt install -y mongodb-org
+
+▶️ 5. Start and Enable MongoDB
+sudo systemctl start mongod
+sudo systemctl enable mongod
+sudo systemctl status mongod
+
+✅ 6. Verify MongoDB Installation
+mongosh
+

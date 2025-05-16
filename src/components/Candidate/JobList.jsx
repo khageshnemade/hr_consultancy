@@ -157,9 +157,10 @@ const JobList = () => {
             className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all p-5"
           >
             <div className="mb-2">
-              <h3 className="text-xl font-semibold text-blue-700">
-                {job.title}
-              </h3>
+            <h3 className="text-xl font-semibold text-blue-700 leading-snug line-clamp-2 h-[3.5rem] overflow-hidden">
+  {job.title}
+</h3>
+
               <p className="text-sm text-gray-500">{job.company_name}</p>
             </div>
 

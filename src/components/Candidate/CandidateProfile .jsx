@@ -11,12 +11,17 @@ import {
   FaBriefcase,
   FaPen
 } from "react-icons/fa";
+import { useDispatch } from "react-redux";
+import { setProfileData } from "../../../redux/features/profileSlice"; // Adjust path as needed
 
 const CandidateProfile = () => {
   const [profile, setProfile] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState({ type: "", url: "" });
+  const [previewImage, setPreviewImage] = useState(null);
+  const dispatch = useDispatch();
+
   const [formData, setFormData] = useState({
     name: "",
     mobile: "",
@@ -60,11 +65,11 @@ const CandidateProfile = () => {
     loadTalukas();
   }, [formData.district, districts]); // This only triggers when district changes
     
-
   const fetchProfile = async () => {
     try {
       const res = await makeRequest.get("candidate/profiledetails/");
       setProfile(res.data);
+      dispatch(setProfileData(res.data)); // ✅ Sync with Redux
   
       const updatedForm = {
         name: res.data.name || "",
@@ -84,7 +89,6 @@ const CandidateProfile = () => {
   
       setFormData(updatedForm);
   
-      // Find the district ID to fetch talukas
       const district = updatedForm.district;
       if (district) {
         const selectedDistrict = districts.find(d => d.district === district);
@@ -97,6 +101,7 @@ const CandidateProfile = () => {
       setMessage("Failed to load profile");
     }
   };
+  
   
 
   const fetchDistricts = async () => {
@@ -125,12 +130,18 @@ const CandidateProfile = () => {
 
   const handleChange = async (e) => {
     const { name, value, files, type } = e.target;
-
+  
     if (type === "file") {
-      setFormData((prev) => ({ ...prev, [name]: files[0] }));
+      const file = files[0];
+      setFormData((prev) => ({ ...prev, [name]: file }));
+  
+      if (name === "profile_pic" && file) {
+        const imageUrl = URL.createObjectURL(file);
+        setPreviewImage(imageUrl);
+      }
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
-
+  
       if (name === "district") {
         const selectedDistrict = districts.find(
           (district) => district.district === value
@@ -142,6 +153,8 @@ const CandidateProfile = () => {
       }
     }
   };
+  
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -151,7 +164,8 @@ const CandidateProfile = () => {
       if (value) {
         data.append(key, value);
       }
-    });
+    }
+  );
 
     try {
       await makeRequest.put("candidate/profiledetails/", data, {
@@ -159,11 +173,17 @@ const CandidateProfile = () => {
           "Content-Type": "multipart/form-data",
         },
       });
-
+      
       setMessage("✅ Profile updated successfully!");
       setEditMode(false);
+      
       const response = await makeRequest.get("candidate/profiledetails/");
       setProfile(response.data);
+      dispatch(setProfileData(response.data)); // ✅ Sync with Redux
+      
+      setPreviewImage(null);
+      
+      setPreviewImage(null); 
     } catch (error) {
       setMessage("❌ Failed to update profile");
       console.error("Update error:", error);
@@ -193,15 +213,18 @@ const CandidateProfile = () => {
     <div className="max-w-3xl mx-auto mt-30 p-8 bg-gray-50 rounded-xl shadow-sm pt-20">
       <div className="flex justify-center -mt-16 mb-6 relative">
         <div className="relative w-32 h-32 rounded-full overflow-hidden shadow-lg border-4 border-white bg-gray-200">
-          <img
-            src={
-              profile.profile_pic
-                ? `https://consultancy.scholarnet.in/${profile.profile_pic}`
-                : "/default-profile.png"
-            }
-            alt="Profile"
-            className="object-cover w-full h-full"
-          />
+        <img
+  src={
+    previewImage
+      ? previewImage
+      : profile.profile_pic
+        ? `https://consultancy.scholarnet.in/${profile.profile_pic}`
+        : "/default-profile.png"
+  }
+  alt="Profile"
+  className="object-cover w-full h-full"
+/>
+
           {editMode && (
             <>
               <label
@@ -328,7 +351,7 @@ const CandidateProfile = () => {
             </button>
             <button
               type="button"
-              onClick={() => setEditMode(false)}
+              onClick={() => {setEditMode(false);setPreviewImage(null); }}
               className="bg-gray-300 px-5 py-2 rounded-lg hover:bg-gray-400 transition"
             >
               Cancel

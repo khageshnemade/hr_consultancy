@@ -24,6 +24,11 @@ const iconMap = {
   taluka: <FaCity />,
   city: <FaCity />,
 };
+import { useDispatch } from "react-redux";
+import { setProfileData } from "../../../redux/features/profileSlice"
+
+
+
 
 const EmployerProfile = () => {
   const [profile, setProfile] = useState(null);
@@ -32,7 +37,8 @@ const EmployerProfile = () => {
   const [message, setMessage] = useState("");
   const [districts, setDistricts] = useState([]);
   const [talukas, setTalukas] = useState([]);
-
+  const [logoPreview, setLogoPreview] = useState(null);
+  const dispatch = useDispatch();
   // Fetch districts from API
   const fetchDistricts = async () => {
     try {
@@ -110,6 +116,13 @@ const EmployerProfile = () => {
       }));
     }
   };
+  const handleLogoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormData((prev) => ({ ...prev, organization_logo: file }));
+      setLogoPreview(URL.createObjectURL(file));
+    }
+  };
   
     
 
@@ -135,6 +148,9 @@ const EmployerProfile = () => {
 
       const updated = await makeRequest.get("employer/profiledetails/");
       setProfile(updated.data);
+      setLogoPreview(null);
+      dispatch(setProfileData(updated.data)); // 🔁 Update Redux store
+      
     } catch (err) {
       setMessage("❌ Failed to update profile");
     }
@@ -167,15 +183,18 @@ const EmployerProfile = () => {
       {(profile.organization_logo || formData.organization_logo) && (
   <div className="flex justify-center mb-6 relative group">
     <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-md relative">
-      <img
-        src={
-          formData.organization_logo
-            ? URL.createObjectURL(formData.organization_logo)
-            : `https://consultancy.scholarnet.in/${profile.organization_logo}`
-        }
-        alt="Organization Logo"
-        className="w-full h-full object-cover"
-      />
+    <img
+  src={
+    logoPreview
+      ? logoPreview
+      : profile.organization_logo
+      ? `https://consultancy.scholarnet.in/${profile.organization_logo}`
+      : "/default-profile.png"
+  }
+  alt="Organization Logo"
+  className="w-full h-full object-cover"
+/>
+
 
       {editMode && (
         <>
@@ -186,17 +205,13 @@ const EmployerProfile = () => {
             <FaPen className="text-white text-lg" />
           </div>
           <input
-            id="logoUpload"
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={(e) =>
-              setFormData((prev) => ({
-                ...prev,
-                organization_logo: e.target.files[0],
-              }))
-            }
-          />
+  id="logoUpload"
+  type="file"
+  accept="image/*"
+  className="hidden"
+  onChange={handleLogoChange}
+/>
+
         </>
       )}
     </div>
@@ -279,7 +294,10 @@ const EmployerProfile = () => {
             </button>
             <button
               type="button"
-              onClick={() => setEditMode(false)}
+              onClick={() => {
+                setEditMode(false);
+                setLogoPreview(null);
+              }}
               className="bg-gray-300 px-5 py-2 rounded-lg hover:bg-gray-400 transition"
             >
               Cancel
