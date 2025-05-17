@@ -74,7 +74,10 @@ const Routers = () => {
         <Route path="candidate/dashboard" element={<Dashboard />} />
         <Route path="candidate/profile" element={<CandidateProfile />} />
         <Route path="candidate/applied_jobs" element={<AppliedJobs />} />
-        <Route path="candidate/applied_jobs/:status" element={<AppliedJobs />} />
+        <Route
+          path="candidate/applied_jobs/:status"
+          element={<AppliedJobs />}
+        />
         <Route path="/candidate/job-details/:jobId" element={<JobDetail />} />
 
         {/* ---------------------------------------Employer------------------------------------------------------- */}
@@ -85,10 +88,7 @@ const Routers = () => {
           path="/employer/applications/:title/:job_id"
           element={<ApplicationView />}
         />
-        <Route
-          path="/employer/applications"
-          element={<EmpApplications />}
-        />
+        <Route path="/employer/applications" element={<EmpApplications />} />
         <Route
           path="/employer/update-status/:istatus/:app_id"
           element={<UpdateApplicationStatus />}

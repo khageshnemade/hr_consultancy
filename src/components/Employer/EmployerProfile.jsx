@@ -25,16 +25,13 @@ const iconMap = {
   city: <FaCity />,
 };
 import { useDispatch } from "react-redux";
-import { setProfileData } from "../../../redux/features/profileSlice"
-
-
-
+import { setProfileData } from "../../../redux/features/profileSlice";
+import { toast } from "react-toastify";
 
 const EmployerProfile = () => {
   const [profile, setProfile] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState({});
-  const [message, setMessage] = useState("");
   const [districts, setDistricts] = useState([]);
   const [talukas, setTalukas] = useState([]);
   const [logoPreview, setLogoPreview] = useState(null);
@@ -47,21 +44,26 @@ const EmployerProfile = () => {
       );
       setDistricts(response.data);
     } catch (error) {
-      console.error("Failed to fetch districts:", error.response?.data || error.message);
+      console.error(
+        "Failed to fetch districts:",
+        error.response?.data || error.message
+      );
       alert("Unable to load district data. Please try again later.");
     }
   };
 
   // Fetch talukas based on the selected district
   const fetchTalukas = async (districtId) => {
-
     try {
       const response = await makeRequest.get(
         `https://consultancy.scholarnet.in/api/core/taluka_list/${districtId}`
       );
       setTalukas(response.data);
     } catch (error) {
-      console.error("Failed to fetch talukas:", error.response?.data || error.message);
+      console.error(
+        "Failed to fetch talukas:",
+        error.response?.data || error.message
+      );
       alert("Unable to load taluka data. Please try again later.");
     }
   };
@@ -85,14 +87,14 @@ const EmployerProfile = () => {
         organization_logo: null,
       });
     } catch (err) {
-      setMessage("❌ Failed to load employer profile");
+      toast.error("❌ Failed to load employer profile");
     }
   };
   useEffect(() => {
     fetchProfile();
     fetchDistricts();
   }, []);
-  
+
   useEffect(() => {
     if (formData.district) {
       fetchTalukas(formData.district);
@@ -101,7 +103,7 @@ const EmployerProfile = () => {
 
   const handleChange = async (e) => {
     const { name, value } = e.target;
-  
+
     if (name === "district") {
       setFormData((prev) => ({
         ...prev,
@@ -123,8 +125,6 @@ const EmployerProfile = () => {
       setLogoPreview(URL.createObjectURL(file));
     }
   };
-  
-    
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -143,21 +143,22 @@ const EmployerProfile = () => {
         },
       });
 
-      setMessage("✅ Profile updated successfully");
+      toast.success("✅ Profile updated successfully");
       setEditMode(false);
 
       const updated = await makeRequest.get("employer/profiledetails/");
       setProfile(updated.data);
       setLogoPreview(null);
       dispatch(setProfileData(updated.data)); // 🔁 Update Redux store
-      
     } catch (err) {
-      setMessage("❌ Failed to update profile");
+      toast.error("❌ Failed to update profile");
     }
   };
 
   if (!profile) {
-    return <div className="text-center mt-10 pt-20">Loading employer profile...</div>;
+    return (
+      <div className="text-center mt-10 pt-20">Loading employer profile...</div>
+    );
   }
 
   const fields = [
@@ -181,47 +182,39 @@ const EmployerProfile = () => {
         Employer Profile
       </h2>
       {(profile.organization_logo || formData.organization_logo) && (
-  <div className="flex justify-center mb-6 relative group">
-    <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-md relative">
-    <img
-  src={
-    logoPreview
-      ? logoPreview
-      : profile.organization_logo
-      ? `https://consultancy.scholarnet.in/${profile.organization_logo}`
-      : "/default-profile.png"
-  }
-  alt="Organization Logo"
-  className="w-full h-full object-cover"
-/>
+        <div className="flex justify-center mb-6 relative group">
+          <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-md relative">
+            <img
+              src={
+                logoPreview
+                  ? logoPreview
+                  : profile.organization_logo
+                  ? `https://consultancy.scholarnet.in/${profile.organization_logo}`
+                  : "/default-profile.png"
+              }
+              alt="Organization Logo"
+              className="w-full h-full object-cover"
+            />
 
-
-      {editMode && (
-        <>
-          <div
-            className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
-            onClick={() => document.getElementById("logoUpload").click()}
-          >
-            <FaPen className="text-white text-lg" />
+            {editMode && (
+              <>
+                <div
+                  className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                  onClick={() => document.getElementById("logoUpload").click()}
+                >
+                  <FaPen className="text-white text-lg" />
+                </div>
+                <input
+                  id="logoUpload"
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleLogoChange}
+                />
+              </>
+            )}
           </div>
-          <input
-  id="logoUpload"
-  type="file"
-  accept="image/*"
-  className="hidden"
-  onChange={handleLogoChange}
-/>
-
-        </>
-      )}
-    </div>
-  </div>
-)}
-
-      {message && (
-        <p className="text-center mb-4 text-sm text-red-600 font-medium">
-          {message}
-        </p>
+        </div>
       )}
 
       {editMode ? (
@@ -236,23 +229,23 @@ const EmployerProfile = () => {
               </label>
 
               {["district", "taluka"].includes(name) ? (
-               <select
-               name={name}
-               value={formData[name]}
-               onChange={handleChange}
-               className="block w-full px-4 py-2 rounded border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-red-500"
-               required
-             >
-               <option value="">{`Select ${label}`}</option>
-               {(name === "district" ? districts : talukas).map((item) => (
-                 <option
-                   key={item.id}
-                   value={name === "district" ? item.id : item.taluka}
-                 >
-                   {name === "district" ? item.district : item.taluka}
-                 </option>
-               ))}
-             </select>
+                <select
+                  name={name}
+                  value={formData[name]}
+                  onChange={handleChange}
+                  className="block w-full px-4 py-2 rounded border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-red-500"
+                  required
+                >
+                  <option value="">{`Select ${label}`}</option>
+                  {(name === "district" ? districts : talukas).map((item) => (
+                    <option
+                      key={item.id}
+                      value={name === "district" ? item.id : item.taluka}
+                    >
+                      {name === "district" ? item.district : item.taluka}
+                    </option>
+                  ))}
+                </select>
               ) : name === "company_id_type" ? (
                 <select
                   name={name}
@@ -272,10 +265,11 @@ const EmployerProfile = () => {
                   type="text"
                   value={formData[name] || ""}
                   onChange={handleChange}
-                  className={`w-full px-4 py-2 rounded-lg bg-white shadow-sm focus:ring-2 ${name === "role"
+                  className={`w-full px-4 py-2 rounded-lg bg-white shadow-sm focus:ring-2 ${
+                    name === "role"
                       ? "cursor-not-allowed bg-gray-100"
                       : "focus:ring-red-400"
-                    } focus:outline-none`}
+                  } focus:outline-none`}
                   placeholder={`Enter ${label}`}
                   readOnly={name === "role"}
                   disabled={name === "role"}
@@ -322,8 +316,6 @@ const EmployerProfile = () => {
               </div>
             ))}
           </div>
-
-      
 
           <div className="flex justify-end mt-6">
             <button
